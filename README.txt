@@ -1,4 +1,4 @@
-Bayesian uncertainty modeling for parametric systems, or peak fitting with error bars.
+Bayesian uncertainty modeling for parametric systems (BUMPS), or peak fitting with error bars.
 
 Bumps has a variety of optimization algorithms available for locating
 the most like value for function parameters given data, and for exploring

@@ -12,7 +12,7 @@ def monospline(x, y, xt):
     r"""
     Monotonic cubic hermite interpolation.
 
-    Returns $p(x_t)$ where $p(x_i)= y_i$ and $p(x) \leq p(xi)$
+    Returns $p(x_t)$ where $p(x_i)= y_i$ and $p(x) \leq p(x_i)$
     if $y_i \leq y_{i+1}$ for all $y_i$.  Also works for decreasing
     values $y$, resulting in decreasing $p(x)$.  If $y$ is not monotonic,
     then $p(x)$ may peak higher than any $y$, so this function is not
@@ -25,14 +25,15 @@ def monospline(x, y, xt):
 
     http://en.wikipedia.org/wiki/Monotone_cubic_interpolation
     """
-    accepted_types = [int,long,float]
-    rejected_types = [complex,dict,set,frozenset]
-    if all( [type(x) in accepted_types for x in [x,y,xt]] ) == True:
-        x = [x]
-        y = [y]
-        xt = [xt]
-    if any( [type(x) in rejected_types for x in [x,y,xt]] ) == True:
-        raise NotImplementedError
+
+#    accepted_types = [int,long,float]
+#    rejected_types = [complex,dict,set,frozenset]
+#    if all( [type(x) in accepted_types for x in [x,y,xt]] ) == True:
+#        x = [x]
+#        y = [y]
+#        xt = [xt]
+#    if any( [type(x) in rejected_types for x in [x,y,xt]] ) == True:
+#        raise NotImplementedError
 
     x = hstack((x[0]-1,x,x[-1]+1))
     y = hstack((y[0], y, y[-1]))

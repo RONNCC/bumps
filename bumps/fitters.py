@@ -50,7 +50,9 @@ class StepMonitor(monitor.Monitor):
         self.fields = fields
         self._pattern = "%%(%s)s\n" % (")s %(".join(fields))
         fid.write("# " + ' '.join(fields) + '\n')
-
+        if self.dof <= 0:
+            raise NotImplementedError('Not Enough Data to Model (Degrees of Freedom are <= 0)')
+        
     def config_history(self, history):
         history.requires(time=1, value=1, point=1, step=1)
 

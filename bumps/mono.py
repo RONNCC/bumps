@@ -18,9 +18,22 @@ def monospline(x, y, xt):
     then $p(x)$ may peak higher than any $y$, so this function is not
     suitable for a strict constraint on the interpolated function when
     $y$ values are unconstrained.
+    
+    Current Implementation does not support complex arguments,
+    Now supports integer,long and float arguments by casting them into single value lists.
+    Rejects complex,dict,set and frozen set.
 
     http://en.wikipedia.org/wiki/Monotone_cubic_interpolation
     """
+    accepted_types = [int,long,float]
+    rejected_types = [complex,dict,set,frozenset]
+    if all( [type(x) in accepted_types for x in [x,y,xt]] ) == True:
+        x = [x]
+        y = [y]
+        xt = [xt]
+    if any( [type(x) in rejected_types for x in [x,y,xt]] ) == True:
+        raise NotImplementedError
+
     x = hstack((x[0]-1,x,x[-1]+1))
     y = hstack((y[0], y, y[-1]))
     dx = diff(x)

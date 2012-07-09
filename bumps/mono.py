@@ -34,7 +34,6 @@ def monospline(x, y, xt):
 #        xt = [xt]
 #    if any( [type(x) in rejected_types for x in [x,y,xt]] ) == True:
 #        raise NotImplementedError
-
     x = hstack((x[0]-1,x,x[-1]+1))
     y = hstack((y[0], y, y[-1]))
     dx = diff(x)

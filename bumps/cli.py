@@ -75,7 +75,7 @@ def preview(problem):
     problem.plot()
     pylab.show()
 
-def remember_best(fitdriver, problem, best):
+def remember_best(fitdriver, problem, best, plot=True):
     # Make sure the problem contains the best value
     problem.setp(best)
     #print "remembering best"
@@ -86,7 +86,8 @@ def remember_best(fitdriver, problem, best):
     fitdriver.save(problem.output_path)
     with util.redirect_console(problem.output_path+".err"):
         fitdriver.show()
-        fitdriver.plot(problem.output_path)
+        if plot:
+            fitdriver.plot(problem.output_path)
     fitdriver.show()
     #print "plotting"
 
@@ -253,7 +254,7 @@ class BumpsOpts(ParseOpts):
     noise="5"
     starts="1"
     seed=""
-    PLOTTERS="linear", "log", "residuals"
+    PLOTTERS="linear", "log", "residuals", "none"
     USAGE = """\
 Usage: bumps modelfile [modelargs] [options]
 
@@ -546,7 +547,7 @@ def main():
 
         fitdriver.mapper = mapper.start_mapper(problem, opts.args)
         best, fbest = fitdriver.fit(resume=resume_path)
-        remember_best(fitdriver, problem, best)
+        remember_best(fitdriver, problem, best, plots=opts.plot != "none")
         if opts.cov: print problem.cov()
         beep()
         if not opts.batch:

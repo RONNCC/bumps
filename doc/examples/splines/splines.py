@@ -1,8 +1,12 @@
 import numpy
 import bumps
-from bumps.parameter import Parameter
+from bumps import pmath
+from bumps.parameter import Parameter,flatten
 from bumps.mono import monospline
-from random import randint
+from random import randint,randrange, sample,uniform
+from logilab.common.compat import izip
+from bumps.bounds import Bounds
+
 
 class ConstantModel(object):
     def __init__(self, C, x, y, dy):
@@ -145,74 +149,166 @@ class Polynomial(object):
     def update(self):
         pass
 class Point(object):
-    def __init__(self,x,y):
-        if (isinstance(x, int) and isinstance(y,int)) == False:
-            raise Not
-        self.x = Parameter(x,name=name+'x')
-        self.y = Parameter(y,name=name+'y')
+    def __init__(self,x,y,name = "",xrange = [0,10],yrange=[0,10]):
+        self.x = Parameter(x,name=name+'x', bounds = xrange)
+        self.y = Parameter(y,name=name+'y',bounds=yrange)
         self.value = [self.x,self.y]
     def getParameters(self):
         return [self.x, self.y]
+    def __str__(self):
+        return str("Point({}, {})".format(self.x,self.y))
     
+def randomrange(a,b,k):#range on [a,b) and number to pull from the range
+    return sorted(sample(xrange(a,b)))
+    
+def invx(data_points):
+    x = numpy.linspace(-1,1,data_points)
+    y = 1/numpy.cos(x)
+    return x,y
+    
+    
+def randomspline(n,p,a,b,nsteps=100,distribution=numpy.random.random):    
+    """ 
+        increasing monotonically only
+        n control points, x random points on the range [a,b) where c is the step
+    """
+    #x = numpy.arange(a,b,step)
+    #xt = numpy.random.uniform(min(x),max(x),p)
+    Cx = numpy.cumsum(numpy.random.exponential(size=n))
+    Cx = Cx/Cx[-1]*(b-a)+a
+    Cy = distribution(Cx.shape)
+    xt = numpy.linspace(min(Cx),max(Cx),p)
+    #print (xt,monospline(Cx,Cy,xt),Cx,Cy)
+    return (xt,monospline(Cx,Cy,xt),Cx,Cy)
+
+    #uniform(xr[z-1],xr[z]), uniform(miny,maxy)
+
 class Monospline(object):
     """
         Monospline Interpolation for Control Points given a spline.
     """
-    def __init__(self, n,x,y,name=''):
+    def __init__(self, n,xt,y,dy,name=''):
         """
         n = number of control points to use
-        x,y = input and output data for a spline p, in which p($x_i$) = $y_i$
-        x and y are respectively lists of (x,y) points to pass to the monospline function. xt is a list
-        of the control point x values to ask for back        """
-        if all(isinstance(z,list) for z in (x,y,xt)):
-            self.Points  = [Parameter(0,name=name+"x Values")]
-        else:
-            raise NotImplementedError('Only lists for the values for the x and y control points can be sent at the moment')
+        xt,y = input and output data for a spline p, in which p($x_i$) = $y_i$
+        """
+        self.xt = xt
+        self.y = y
+        self.dy = dy
+        minx,maxx = min(xt),max(xt)
+        miny,maxy = min(y),max(y)
+        xr = numpy.linspace(minx,maxx,n+1)
+        #print 'xr',xr
+        self.cpoints = [Point(uniform(xr[z-1],xr[z]), uniform(miny,maxy),"C{}".format(z),
+                              xrange=xr[z-1:z+1]) for z in range(1,n+1)]
         
-        def parameters(self):
-            return [self.x,self.y]
-        
-
-#    def numpoints(self):
-#        return len(self.x)
-#
-#    def parameters(self):
-#        import pdb
-#        #pdb.set_trace()
-#        #print 'P',p
-#        return self.polys
-#
-#    def theory(self):
-#        #return self.parts[0](self.X,self.Y)
-#        #parts = [M(self.X,self.Y) for M in self.parts]
-#        #for i,p in enumerate(parts):
-#        #    if np.any(np.isnan(p)): print "NaN in part",i
-#        return numpy.polyval([p.value for p in self.polys],self.x)
-#    
-#    def residuals(self):
-#        #if np.any(self.err ==0): print "zeros in err"
-#        return (self.theory()-self.y)/(self.dy)
-#
-#    def nllf(self):
-#        R = self.residuals()    
-#        #if np.any(np.isnan(R)): print "NaN in residuals"
-#        return 0.5*numpy.sum(R**2)
+        #print 'CPOINTS',[ (z.x.value, z.y.value) for z in self.cpoints]
+        #self.cpoints = sorted(self.cpoints, cmp = lambda a,b: cmp(a.x.value, b.x.value))
+        #print 'CPOINTS',[ (z.x.value, z.y.value) for z in self.cpoints]
+    def parameters(self):
+        return [z.getParameters() for z in self.cpoints]
+    def flattened(self):
+        return flatten(self.parameters())
+    def numpoints(self):
+        return len(self.y)
+    def theory(self):
+        return monospline([q.x.value for q in self.cpoints], [q.y.value for q in self.cpoints], self.xt)
+    def residuals(self):
+        return (self.theory()-self.y)/(self.dy)
+    def nllf(self):
+        R = self.residuals()
+        #if np.any(np.isnan(R)): print "NaN in residuals"
+        return 0.5*numpy.sum(((self.theory()-self.y)/(self.dy))**2)
 #    def __call__(self):
 #        raise NotImplementedError
-#
-#    def plot(self, view='linear'):
-#        import pylab      
-#        pylab.errorbar(self.x, self.y, yerr=self.dy, fmt='x')
-#        pylab.plot(self.x, self.theory(), '-',hold=True)
-#
-#    def simulate_data(self, noise):
-#        pass
-#
-#    def save(self, basename):
-#        pass
-#
-#    def update(self):
-#        pass
+    def plot(self, view='linear'):
+        import pylab      
+        xpts = [w.x.value for w in self.cpoints]
+        ypts = [w.y.value for w in self.cpoints]
+        #pylab.errorbar(xpts, ypts, yerr=self.dy, fmt='x')
+        for i,(x,y) in enumerate(zip(xpts,ypts)):
+            pylab.text(x,y,str(i+1))
+        pylab.plot(self.xt,self.y,hold=True)
+        pylab.plot(self.xt,self.theory(),hold=True)
 
 
+class MonosplineInterval(object):
+    """
+        Monospline Interpolation for Control Points given a spline in which the control points vary as an interval
+    """
+    def __init__(self, n,xt,y,dy,name='',targetpoints=None):
+        """
+        n = number of control points to use
+        xt,y = input and output data for a spline p, in which p($x_i$) = $y_i$
+        """
+        offset=.01
+        self.control_points = targetpoints
+        self.n = n
+        idx = numpy.argsort(xt)
+        self.xt = numpy.asarray(xt)[idx]
+        self.y = numpy.asarray(y)[idx]
+        self.dy = numpy.asarray(dy)[idx]
+        #print 'N',n
+        #bound lower and bound higher
+        self.bl =self.xt[0]
+        self.bh = self.xt[-1]
+        self.ymin = min(y)
+        self.ymax = max(y)
+        rs = numpy.random.uniform(0,1000,n-2)
+        #print 'GENERATED RS',rs,sum(rs)
+        #sumrs = 1+sum(rs)
+        #rs /= sumrs
+        #rs *= (self.bh - self.bl)
+        #print 'RS',rs,sum(rs)
+        #rs.sort()
+        self.Cratios = [Parameter(rsi,name = 'ratio{}'.format(i+1), bounds = [0,1000]) for i,rsi in enumerate(rs)]
+        self.Cys = [Parameter(0,name='y{}'.format(w+1), bounds = [self.ymin,self.ymax]) for w in range(len(rs))]
+#        self.cpoints = []
+#        for r in range(len(self.ldx)):
+#            #xval = sum([z.value for z in self.ldx[:r]])
+#            yval = 0
+#            self.cpoints.append(IPoint(yval,name="{}".format(r), vallist=self.ldx[:r]))
+        
+    def parameters(self):
+        return zip(self.Cratios,self.Cys)
+    def flattened(self):
+        return flatten(self.parameters())
+    def numpoints(self):
+        return len(self.y)
+    @property
+    def Cx(self):
+        xfirst, xlast = self.xt[0], self.xt[-1]
+        ratios = numpy.hstack((1, [p.value for p in self.Cratios]))
+        dx = ratios / sum(ratios) * (xlast-xfirst)
+        return numpy.cumsum(numpy.hstack((xfirst, dx)))
+        #print 'Q',[q.x.value.value for q in self.cpoints]
+        #print 'LDX',[z.value for z in self.ldx],'\n','Qx',[q.x for q in self.cpoints],'\n','Qy',[q.y.value for q in self.cpoints],'\n'
+    @property
+    def Cy(self):
+        return numpy.hstack((self.y[0],[y.value for y in self.Cys] ,self.y[-1]))
+
+    def theory(self):
+
+        return monospline(self.Cx, self.Cy, self.xt)
+    def residuals(self):
+        return (self.theory()-self.y)/(self.dy)
+    def nllf(self):
+        R = self.residuals()
+        #if np.any(np.isnan(R)): print "NaN in residuals"
+        return 0.5*numpy.sum(((self.theory()-self.y)/(self.dy))**2)
+#    def __call__(self):
+#        raise NotImplementedError
+    def plot(self, view='linear'):
+        import pylab      
+        #pylab.errorbar(xpts, ypts, yerr=self.dy, fmt='x')
+        #print 'PTS',xpts,ypts
+        for i,(x,y) in enumerate(zip(self.Cx,self.Cy)):
+            pylab.text(x,y,str(i))
+        #print 'SELFXT',self.xt,'----------------','SELFTHEORY',self.theory()
+        if self.control_points:
+            pylab.plot(self.control_points[0],self.control_points[1],'bs',hold=True)
+        pylab.plot(self.xt,self.y,hold=True)
+        #pylab.plot(self.xt,self.theory(),hold=True)
+        pylab.plot(self.xt,self.theory(),hold=True)
+#
 

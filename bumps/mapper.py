@@ -59,7 +59,7 @@ class MPMapper(object):
 
     @staticmethod
     def start_mapper(problem, modelargs, cpus=None):
-        import multiprocessing
+        import multiprocessing  
         if cpus is None:
             cpus = multiprocessing.cpu_count()
         if MPMapper.pool is None:

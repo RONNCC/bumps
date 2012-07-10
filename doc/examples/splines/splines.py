@@ -241,6 +241,8 @@ class MonosplineInterval(object):
         n = number of control points to use
         xt,y = input and output data for a spline p, in which p($x_i$) = $y_i$
         """
+        self.rmax = 100000
+        self.rmin = 0
         offset=.01
         self.control_points = targetpoints
         self.n = n
@@ -261,7 +263,7 @@ class MonosplineInterval(object):
         #rs *= (self.bh - self.bl)
         #print 'RS',rs,sum(rs)
         #rs.sort()
-        self.Cratios = [Parameter(rsi,name = 'ratio{}'.format(i+1), bounds = [0,1000]) for i,rsi in enumerate(rs)]
+        self.Cratios = [Parameter(rsi,name = 'ratio{}'.format(i+1), bounds = [self.rmin,self.rmax]) for i,rsi in enumerate(rs)]
         self.Cys = [Parameter(0,name='y{}'.format(w+1), bounds = [self.ymin,self.ymax]) for w in range(len(rs))]
 #        self.cpoints = []
 #        for r in range(len(self.ldx)):
@@ -305,6 +307,9 @@ class MonosplineInterval(object):
         for i,(x,y) in enumerate(zip(self.Cx,self.Cy)):
             pylab.text(x,y,str(i))
         #print 'SELFXT',self.xt,'----------------','SELFTHEORY',self.theory()
+        #print '\n'
+        #print 'REAL CONTROLS AT',zip(self.control_points[0],self.control_points[1])
+        #print 'CURRENT CONTROLS AT',zip(self.Cx, self.Cy)
         if self.control_points:
             pylab.plot(self.control_points[0],self.control_points[1],'bs',hold=True)
         pylab.plot(self.xt,self.y,hold=True)

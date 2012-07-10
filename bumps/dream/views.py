@@ -28,9 +28,10 @@ def plot_all(state, portion=1.0, figfile=None):
     figure(); plot_logp(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-logp")
-    figure(); plot_corrmatrix(state, portion=portion)
-    if state.title: suptitle(state.title)
-    if figfile != None: savefig(figfile+"-corr")
+    def corr():
+        figure(); plot_corrmatrix(state, portion=portion)
+        if state.title: suptitle(state.title)
+        if figfile != None: savefig(figfile+"-corr")
 
 def plot_var(state, var=0, portion=None, selection=None, **kw):
     points, logp = state.sample(portion=portion, vars=[var],

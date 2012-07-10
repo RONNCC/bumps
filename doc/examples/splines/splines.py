@@ -4,7 +4,7 @@ from bumps import pmath
 from bumps.parameter import Parameter,flatten
 from bumps.mono import monospline
 from random import randint,randrange, sample,uniform
-from logilab.common.compat import izip
+#from logilab.common.compat import izip
 from bumps.bounds import Bounds
 
 

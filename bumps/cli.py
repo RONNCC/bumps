@@ -547,7 +547,7 @@ def main():
 
         fitdriver.mapper = mapper.start_mapper(problem, opts.args)
         best, fbest = fitdriver.fit(resume=resume_path)
-        remember_best(fitdriver, problem, best, plots=opts.plot != "none")
+        remember_best(fitdriver, problem, best, plot= (opts.plot != "none"))
         if opts.cov: print problem.cov()
         beep()
         if not opts.batch:

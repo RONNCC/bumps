@@ -36,6 +36,19 @@ class CorrelationView(PlotView):
         self.plot_state = event.uncertainty_state
         self.plot()
 
+class RStatView(PlotView):
+    title = "Gelman Convergence"
+    def plot(self):
+        if not self.plot_state: return
+        history = self.plot_state
+        import pylab
+        with self.pylab_interface:
+            dream_views.plot_R(history)
+            pylab.draw()
+    def OnFitProgress(self, event):
+        if event.problem != self.model: return
+        self.plot_state = event.uncertainty_state
+        self.plot()
 
 class TraceView(PlotView):
     title = "Parameter Trace"

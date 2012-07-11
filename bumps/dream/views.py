@@ -28,7 +28,7 @@ def plot_all(state, portion=1.0, figfile=None):
     figure(); plot_logp(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-logp")
-    def corr():
+    def corr(): 
         figure(); plot_corrmatrix(state, portion=portion)
         if state.title: suptitle(state.title)
         if figfile != None: savefig(figfile+"-corr")
@@ -304,11 +304,9 @@ def plot_corr(state, vars=(0,1), portion=None, selection=None):
     axHistY.xaxis.set_major_locator(MaxNLocator(4,prune="both"))
     setp(axHistY.get_yticklabels(), visible=False)
 
-def plot_trace(state, var=0, portion=None):
+def plot_trace(state, var=0, portion=1):
     from pylab import plot, title, xlabel, ylabel
 
-    if portion == None:
-        portion = 0.8 if state.burnin == 0 else 1
     draw, points, _ = state.chains()
     start = int((1-portion)*len(draw))
     plot(arange(start,len(points))*state.thinning,
@@ -317,11 +315,8 @@ def plot_trace(state, var=0, portion=None):
     xlabel('Generation number')
     ylabel('Parameter value')
 
-def plot_R(state, portion=None):
+def plot_R(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel
-
-    if portion == None:
-        portion = 0.8 if state.burnin == 0 else 1
     draw, R = state.R_stat()
     start = int((1-portion)*len(draw))
     plot(arange(start,len(R)), R[start:])
@@ -330,11 +325,9 @@ def plot_R(state, portion=None):
     xlabel('Generation number')
     ylabel('R')
 
-def plot_logp(state, portion=None):
+def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel
 
-    if portion == None:
-        portion = 0.8 if state.burnin == 0 else 1
     draw, logp = state.logp()
     start = int((1-portion)*len(draw))
     plot(arange(start,len(logp)), logp[start:], '.', markersize=1)

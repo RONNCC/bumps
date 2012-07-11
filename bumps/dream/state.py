@@ -773,6 +773,8 @@ def _sample(state, portion, vars, selection):
     Return a sample from a set of chains.
     """
     draw, chains, logp = state.chains()
+    if portion is None:
+        portion = 1
     start = int((1-portion)*len(draw))
 
     # Collect the subset we are interested in

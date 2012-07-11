@@ -1,0 +1,31 @@
+#!/bin/bash
+
+chunks=(1 5 10 50 100 200 1000 2000 000)
+STEPS=(10 50 100 500 1000 2000 )
+BURN=(10 50 100 500 1000 2000 )
+SEED=212
+ctrlpts=(5 10 15)
+samplepoints=1000
+numruns=4
+mkdir -p TIMINGS
+for (( i = 0 ; i < ${#chunks[@]} ; i++ )); do
+for (( j = 0 ; j < ${#STEPS[@]} ; j++ )); do
+for (( k = 0 ; k < ${#BURN[@]} ; k++ )); do
+for (( l = 0 ; l< ${#ctrlpts[@]} ; l++ ));do
+for (( m = 0 ; m < numruns ; m++)); do
+	chunk=${chunks[$i]}
+	step=${STEPS[$j]}
+	bur=${BURN[$k]}
+	locctrl=${ctrlpts[$l]}
+	locdir=Step$step/Burn$bur/ChunkSize$chunk/Ctrlpts$locctrl/Run$m
+	timedir=TIMINGS/$locdir
+	storedir=T1/$locdir
+	mkdir -p $timedir
+	mkdir -p $storedir
+	echo "Currently on:  Chunk:$i / ${#chunks[@]} Step: $j / ${#STEPS[@]} Burn: $k / ${#BURN[@]} CtrlPoint: $l/ ${#ctrlpts[@]} Run: $m / $numruns"
+	/usr/bin/time -v -o $timedir/timing ./bumps-script ~/Projects/bumps/doc/examples/splines/model.py $locctrl $SEED intmonosp $samplepoints --batch --parallel --steps=$step --burn=$bur --store=$storedir --fit=dream  --chunksize=$chunk  
+done
+done
+done
+done
+done

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ROOT=~/Projects/bumps
+export PYTHONPATH=$ROOT/:$ROOT/bin/bumps
+
+python $ROOT/bin/bumps "$@"
+
+
+

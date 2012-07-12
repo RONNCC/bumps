@@ -322,7 +322,7 @@ def plot_R(state, portion=1):
     #variance = var(R,axis=0)
     print R
     print 'R0-----------------------------------'
-    print R[0]
+    print R[-1]
     plot(arange(start,len(R)), R[start:])
     title('Convergence history')
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])

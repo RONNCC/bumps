@@ -319,6 +319,7 @@ def plot_R(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel
     draw, R = state.R_stat()
     start = int((1-portion)*len(draw))
+    print 'R',R
     plot(arange(start,len(R)), R[start:])
     title('Convergence history')
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])

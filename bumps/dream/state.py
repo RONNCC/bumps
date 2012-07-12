@@ -76,7 +76,7 @@ import re
 import gzip
 
 import numpy
-from numpy import empty, sum, asarray, inf, argmax, hstack, dstack
+from numpy import empty, sum, asarray, inf, argmax, hstack, dstack,array
 from numpy import savetxt,loadtxt, reshape
 from .outliers import identify_outliers
 from .util import draw, RNG
@@ -602,6 +602,7 @@ class MCMCDraw(object):
         return retval
 
     def R_stat(self):
+        #from .gelman import gelman
         """
         Return the R-statistics convergence statistic for each variable.
 
@@ -613,9 +614,11 @@ class MCMCDraw(object):
         See :module:`dream.gelman` and references detailed therein.
         """
         self._unroll()
+        #print 'CHAIN',self.chains()[1], self.chains()[1].shape
         retval = self._update_draws, self._update_R_stat
         if self._update_count == self._update_index:
             retval = [v[:self._update_count] for v in retval]
+        #print retval, retval.shape
         return retval
 
 

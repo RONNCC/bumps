@@ -395,7 +395,7 @@ class MCMCDraw(object):
         self._update_index = i
         
         
-    def updateZ(self,Z_stat,CR_weight):
+    def _updateZ(self,Z_stat,CR_weight):
         """
         Updates Geweke Z Statistic
         Called from dream.py when a series of DE steps is completed and

@@ -292,7 +292,7 @@ def run_dream(dream):
         _, points, _ = state.chains()
         R_stat = gelman(points, portion=0.5)
         Z_stat = geweke(points, portion=0.5)
-
+        print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic
         
         if state.draws <= 0.1 * dream.draws:

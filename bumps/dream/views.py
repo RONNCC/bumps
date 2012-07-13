@@ -1,7 +1,7 @@
 from __future__ import division
 __all__ = ['plot_all', 'plot_corr', 'plot_corrmatrix',
            'plot_trace', 'plot_vars', 'plot_var',
-           'plot_R','plot_logp', 'format_vars']
+           'plot_R','plot_logp', 'format_vars','plot_Z']
 
 import math
 import re
@@ -288,7 +288,7 @@ def plot_corr(state, vars=(0,1), portion=None, selection=None):
 
     #density_xy = kde_2d(points[:,vars])
     #dxy = density_xy(x,y)*points.shape[0]
-    #axData.pcolorfast(x,y,dxy,cmap=cm.gist_earth_r) #@UndefinedVariable
+    #axData.pcolorfast(x,y,dx y,cmap=cm.gist_earth_r) #@UndefinedVariable
 
     axData.plot(points[:,p1], points[:,p2], 'k.', markersize=1)
     axData.set_xlabel(labels[p1])
@@ -316,19 +316,29 @@ def plot_trace(state, var=0, portion=1):
     ylabel('Parameter value')
 
 def plot_R(state, portion=1):
-    from pylab import plot, title, legend, xlabel, ylabel
+    from pylab import plot, title, legend, xlabel, ylabel,subplot
     draw, R = state.R_stat()
+    #draw, R2 = state.R_stat2()
     start = int((1-portion)*len(draw))
-    #variance = var(R,axis=0)
-    print R
-    print 'R0-----------------------------------'
-    print R[-1]
+    subplot(211)
+    plot(arange(start,len(R)), R[start:])
+    subplot(212)
     plot(arange(start,len(R)), R[start:])
     title('Convergence history')
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     xlabel('Generation number')
     ylabel('R')
-
+def plot_Z(state, portion=1):
+    from pylab import plot, title, legend, xlabel, ylabel
+    #draw, R = state.R_stat()
+    #start = int((1-portion)*len(draw))
+    #variance = var(R,axis=0)
+    plot(arange(1,9),arange(1,5,.5))
+    title('Convergence history')
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    xlabel('Generation number')
+    ylabel('R')
+    
 def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel
 

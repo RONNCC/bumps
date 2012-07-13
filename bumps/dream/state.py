@@ -384,7 +384,16 @@ class MCMCDraw(object):
         i = i+1
         if i == len(self._update_draws): i = 0
         self._update_index = i
-
+    def updateZ(self,Z_stat,CR_weight):
+        self._update_count += 1
+        i = self._update_index
+        #print "update",i,self.draws,"\n Rstat",R_stat,"\n CR weight",CR_weight
+        self._update_draws[i] = self.draws
+        self._update_R_stat[i] = R_stat
+        self._update_CR_weight[i] = CR_weight
+        i = i+1
+        if i == len(self._update_draws): i = 0
+        self._update_index = i
     def _replace_outlier(self, old, new):
         """
         Called from outliers.py when a chain is replaced by the
@@ -620,6 +629,8 @@ class MCMCDraw(object):
             retval = [v[:self._update_count] for v in retval]
         #print retval, retval.shape
         return retval
+    def R_stat2(self):
+        pass
 
 
     def CR_weight(self):

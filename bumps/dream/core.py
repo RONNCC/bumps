@@ -107,6 +107,7 @@ import time
 from .state import MCMCDraw
 from .metropolis import metropolis, metropolis_dr, dr_step
 from .gelman import gelman
+from .geweke import geweke
 from .crossover import AdaptiveCrossover
 from .diffev import de_step
 from .bounds import make_bounds_handler
@@ -290,7 +291,10 @@ def run_dream(dream):
         # Calculate Gelman and Rubin convergence diagnostic
         _, points, _ = state.chains()
         R_stat = gelman(points, portion=0.5)
+        Z_stat = geweke(points, portion=0.5)
 
+        # Calculate Geweke converge diagnostic
+        
         if state.draws <= 0.1 * dream.draws:
             # Adapt the crossover ratio, but only during burn-in.
             dream.CR.adapt()
@@ -300,6 +304,7 @@ def run_dream(dream):
 
         # Save update information
         state._update(R_stat=R_stat, CR_weight=dream.CR.weight)
+        state._updateZ(Z_stat=Z_stat, CR_weight=dream.CR.weight)
 
 
 

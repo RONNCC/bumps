@@ -11,6 +11,7 @@ The results may be queried as follows::
     acceptance_rate() returns draws, AR
     chains()          returns draws, chains, logp
     R_stat()          returns draws, R
+    Z_stat()          returns draw, Z
     CR_weight()       returns draws, CR_weight
     best()            returns best_x, best_logp
     outliers()        returns outliers
@@ -252,6 +253,13 @@ class MCMCDraw(object):
         self._update_R_stat = empty( (Nupdate, Nvar) )
         self._update_CR_weight = empty( (Nupdate, Ncr) )
 
+        # Z stat
+        self._updateZ_index = 0
+        self._updateZ_count = 0
+        self._updateZ_draws = empty(Nupdate, 'i')
+        self._updateZ_Z_stat = empty( (Nupdate, Nvar) )
+        self._updateZ_CR_weight = empty( (Nupdate, Ncr) )
+
         self._outliers = []
 
         # Query functions will not return outlier chains; initially, all
@@ -372,6 +380,7 @@ class MCMCDraw(object):
 
     def _update(self, R_stat, CR_weight):
         """
+        Updates Gelman R Statistic
         Called from dream.py when a series of DE steps is completed and
         summary statistics/adaptations are ready to be stored.
         """
@@ -384,16 +393,24 @@ class MCMCDraw(object):
         i = i+1
         if i == len(self._update_draws): i = 0
         self._update_index = i
+        
+        
     def updateZ(self,Z_stat,CR_weight):
+        """
+        Updates Geweke Z Statistic
+        Called from dream.py when a series of DE steps is completed and
+        summary statistics/adaptations are ready to be stored.
+        """
         self._update_count += 1
-        i = self._update_index
+        i = self._updateZ_index
         #print "update",i,self.draws,"\n Rstat",R_stat,"\n CR weight",CR_weight
-        self._update_draws[i] = self.draws
-        self._update_R_stat[i] = R_stat
-        self._update_CR_weight[i] = CR_weight
+        self._updateZ_draws[i] = self.draws
+        self._updateZ_Z_stat = Z_stat
+        self._updateZ_CR_weight[i] = CR_weight
         i = i+1
-        if i == len(self._update_draws): i = 0
-        self._update_index = i
+        if i == len(self._updateZ_draws): i = 0
+        self._updateZ_index = i
+        
     def _replace_outlier(self, old, new):
         """
         Called from outliers.py when a chain is replaced by the

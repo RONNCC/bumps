@@ -316,18 +316,28 @@ def plot_trace(state, var=0, portion=1):
     ylabel('Parameter value')
 
 def plot_R(state, portion=1):
-    from pylab import plot, title, legend, xlabel, ylabel,subplot
+    from pylab import plot, title, legend, xlabel, ylabel,subplot,suptitle
+    
+    suptitle('Convergence history')
+    
     draw, R = state.R_stat()
-    #draw, R2 = state.R_stat2()
     start = int((1-portion)*len(draw))
-    subplot(211)
+    subplot(211, title = 'Gelman R Statistic' )
     plot(arange(start,len(R)), R[start:])
-    subplot(212)
-    plot(arange(start,len(R)), R[start:])
-    title('Convergence history')
-    legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     xlabel('Generation number')
     ylabel('R')
+    legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    
+    #R2 = PR in this case, just the naming is different
+    draw, R2 = state.R_stat2()
+    subplot(212, title='Gelman Refined PSRF Statistic')
+    plot(arange(start,len(R2)), R2[start:])
+    legend(['P%d'%i for i in range(1,R2.shape[1]+1)])
+    xlabel('Generation number')
+    ylabel('PSRF')
+    
+    print 'R',R[0]
+    print 'PR',R2[0]
 def plot_Z(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel
     #draw, R = state.R_stat()

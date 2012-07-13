@@ -43,10 +43,7 @@ class RStatView(PlotView):
         history = self.plot_state
         import pylab
         with self.pylab_interface:
-            #subplot(211)
             dream_views.plot_R(history)
-            #subplot(212)
-            # put another plot here
             pylab.draw()
     def OnFitProgress(self, event):
         if event.problem != self.model: return

@@ -7,6 +7,10 @@ from __future__ import division
 from numpy import var, mean, ones, sqrt,sum,transpose,reshape
 def gelman(a,portion):
     return gelman1(a,portion)
+
+def gelmanP(a,portion):
+    return gelmanP1(a,portion)
+
 def gelman1(sequences, portion=0.5):
     """
 Calculates the R-statistic convergence diagnostic
@@ -50,6 +54,51 @@ doi:10.1214/ss/1177011136
         R_stat = sqrt((Nchains + 1)/Nchains * sigma2 / W - (chain_len-1)/Nchains/chain_len);
 
     return R_stat
+
+def gelmanP1(sequences, portion=0.5):
+    """
+Calculates the R-statistic convergence diagnostic
+
+For more information please refer to: Gelman, A. and D.R. Rubin, 1992.
+Inference from Iterative Simulation Using Multiple Sequences,
+Statistical Science, Volume 7, Issue 4, 457-472.
+doi:10.1214/ss/1177011136
+"""
+
+    # Find the size of the sample
+    chain_len,Nchains,Nvar = sequences.shape
+
+    # Only use the last portion of the sample
+    chain_len = int(chain_len*portion)
+    sequences = sequences[-chain_len:]
+
+    if chain_len < 2:
+        # Set the R-statistic to a large value
+        R_stat = -2 * ones(Nvar)
+    else:
+        # Step 1: Determine the sequence means
+        meanSeq = mean(sequences, axis=0)
+
+        # Step 1: Determine the variance between the sequence means
+        B = chain_len * var(meanSeq, axis=0, ddof=1)
+
+        # Step 2: Compute the variance of the various sequences
+        varSeq = var(sequences, axis=0, ddof=1)
+
+        # Step 2: Calculate the average of the within sequence variances
+        W = mean(varSeq,axis=0)
+
+        # Step 3: Estimate the target mean
+        #mu = mean(meanSeq)
+
+        # Step 4: Estimate the target variance (Eq. 3)
+        sigma2 = ((chain_len - 1)/chain_len) * W + (1/chain_len) * B
+
+        # Step 5: Compute the R-statistic
+        R_stat = sqrt((Nchains + 1)/Nchains * sigma2 / W - (chain_len-1)/Nchains/chain_len);
+
+    return R_stat
+
 def test():
     from numpy import reshape, arange, transpose
     from numpy.linalg import norm

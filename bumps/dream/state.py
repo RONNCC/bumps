@@ -253,6 +253,13 @@ class MCMCDraw(object):
         self._update_R_stat = empty( (Nupdate, Nvar) )
         self._update_CR_weight = empty( (Nupdate, Ncr) )
 
+        #PR Stat
+        self._updateP_index = 0
+        self._updateP_count = 0
+        self._updateP_draws = empty(Nupdate, 'i')
+        self._updateP_stat = empty( (Nupdate, Nvar) )
+        self._updateP_draws = empty(Nupdate, 'i')
+        
         # Z stat
         self._updateZ_index = 0
         self._updateZ_count = 0
@@ -393,6 +400,21 @@ class MCMCDraw(object):
         i = i+1
         if i == len(self._update_draws): i = 0
         self._update_index = i
+        
+    def _updateP(self, PR_stat, CR_weight):
+        """
+        Updates Gelman R Statistic
+        Called from dream.py when a series of DE steps is completed and
+        summary statistics/adaptations are ready to be stored.
+        """
+        self._updateP_count += 1
+        i = self._updateP_index
+        #print "update",i,self.draws,"\n Rstat",R_stat,"\n CR weight",CR_weight
+        self._updateP_draws[i] = self.draws
+        self._updateP_stat[i] = PR_stat
+        i = i+1
+        if i == len(self._updateP_draws): i = 0
+        self._updateP_index = i
         
         
     def _updateZ(self,Z_stat,CR_weight):
@@ -646,8 +668,26 @@ class MCMCDraw(object):
             retval = [v[:self._update_count] for v in retval]
         #print retval, retval.shape
         return retval
+    
     def R_stat2(self):
-        pass
+        #from .gelman import gelman
+        """
+        Return the R-statistics convergence statistic for each variable.
+
+        For example, to plot the convergence of all variables over time::
+
+            draw, R = state.R_stat()
+            plot(draw, R)
+
+        See :module:`dream.gelman` and references detailed therein.
+        """
+        self._unroll()
+        #print 'CHAIN',self.chains()[1], self.chains()[1].shape
+        retval = self._updateP_draws, self._updateP_stat
+        if self._updateP_count == self._updateP_index:
+            retval = [v[:self._updateP_count] for v in retval]
+        #print retval, retval.shape
+        return retval
 
 
     def CR_weight(self):

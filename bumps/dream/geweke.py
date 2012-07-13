@@ -4,10 +4,9 @@ Convergence test statistic from Gelman and Rubin, 1992.
 
 from __future__ import division
 
-from numpy import var, mean, ones, sqrt,sum,transpose,reshape
-def geweke(a,portion):
-    return geweke1(a,portion)
-def geweke1(sequences, portion=0.25):
+from numpy import var, mean, ones, sqrt,sum,transpose,reshape,array
+
+def geweke(sequences, portion=0.25):
     """
 Calculates the Geweke convergence diagnostic
 
@@ -17,62 +16,27 @@ Refer to support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.h
     # Find the size of the sample
     chain_len,Nchains,Nvar = sequences.shape
     # Only use the last portion of the sample
-
     Z_stat = 0
     if chain_len < 2:
         # Set the R-statistic to a large value
         Z_stat = -2 * ones(Nvar)
     else:
         new_len = int(chain_len*portion)
-        seq1 = sequences[:chain_len]
-        seq2 = sequences[-chain_len:]
+        #print "STARTING SHAPE",sequences.shape
+        seq1 = sequences[:new_len,:,:]
+        seq2 = sequences[-new_len:,:,:]
+        #print "SEQ1",seq1.shape,'SEQ2',seq2.shape
         # Step 1: Determine the sequence means
         meanseq1 = mean(seq1, axis=0)
         meanseq2 = mean(seq2, axis=0)
-        
-        
-        
-        #Step 2: Spectral Density Estimates
-        
-
-        # Step 1: Determine the variance between the sequence means
-        B = chain_len * var(meanSeq, axis=0, ddof=1)
-
-        # Step 2: Compute the variance of the various sequences
-        varSeq = var(sequences, axis=0, ddof=1)
-
-        # Step 2: Calculate the average of the within sequence variances
-        W = mean(varSeq,axis=0)
-
-        # Step 3: Estimate the target mean
-        #mu = mean(meanSeq)
-
-        # Step 4: Estimate the target variance (Eq. 3)
-        sigma2 = ((chain_len - 1)/chain_len) * W + (1/chain_len) * B
-
-        # Step 5: Compute the R-statistic
-        R_stat = sqrt((Nchains + 1)/Nchains * sigma2 / W - (chain_len-1)/Nchains/chain_len);
-
-    return R_stat
+        #print "SHAPEs",meanseq1.shape,meanseq2.shape
+        var1 = var(meanseq1,axis=0)
+        var2 = var(meanseq2, axis=0)
+        Z_stat = (meanseq1 - meanseq2)/sqrt(var1 + var2)
+        #print 'RETURNS',Z_stat.shape
+    return Z_stat
 def test():
-    from numpy import reshape, arange, transpose
-    from numpy.linalg import norm
-    # Targe values computed from octave:
-    #    format long
-    #    S = reshape([1:15*6*7],[15,6,7]);
-    #    R = gelman(S,struct('n',6,'seq',7))
-    S = reshape(arange(1.,15*6*7+1)**-2, (15, 6, 7), order='F')
-    S = transpose(S, (0,2,1))
-    target = [1.06169861367116,   2.75325774624905,   4.46256647696399,
-              6.12792266170178,   7.74538715553575,   9.31276519155232]
-    R = gelman(S, portion=1)
-    #print R
-    #print "target", array(target), "\nactual", R
-    assert norm(R-target) < 1e-14
-    R = gelman(S, portion=.1)
-    assert norm(R - [-2, -2, -2, -2, -2, -2]) == 0
-    original = reshape(arange(1,20,.5), (19,2,1))
-    gelman(transpose( ),.5)
+    raise NotImplementedError
 
 if __name__ == "__main__":
     test()

@@ -6,13 +6,8 @@ Convergence test statistic from Gelman and Rubin, 1992.
 from __future__ import division
 
 from numpy import var, mean, ones, sqrt,sum,transpose,reshape,cov,corrcoef
-def gelman(a,portion):
-    return gelman1(a,portion)
 
-def gelmanP(a,portion):
-    return gelmanP1(a,portion)
-
-def gelman1(sequences, portion=0.5):
+def gelman(sequences, portion=0.5):
     """
 Calculates the R-statistic convergence diagnostic
 
@@ -56,7 +51,7 @@ doi:10.1214/ss/1177011136
 
     return R_stat
 
-def gelmanP1(sequences, portion=0.5):
+def gelmanP(sequences, portion=0.5):
     """
 Calculates the PSRF Refined Version convergence diagnostic
 
@@ -79,9 +74,8 @@ Journal of Computational and Graphical Statistics, 7, 434-455.
         R_stat = -2 * ones(Nvar)
     else:
         meanSeq = mean(sequences, axis=0)
-        #mean_meanSeq = mean(meanSeq,axis=0)
+        mean_meanSeq = mean(meanSeq,axis=0)
         varSeq = var(sequences, axis=0, ddof=1)
-        
         
         B = chain_len * var(meanSeq, axis=0, ddof=1)
         W = mean(varSeq,axis=0)
@@ -90,7 +84,13 @@ Journal of Computational and Graphical Statistics, 7, 434-455.
         
         #Posterior Variance Estimate, V hat
         V = sigma2 + B/(M*N)
-        PRSF = V/W
+        
+        if 0:
+            # Simple PSRF
+            PSRF = sqrt(V/W)
+        else:
+            pass
+            # Refined version (Brooks and Gelman, 1998)
         # d degrees of freedom
         #d = 
         #Variance Hat ( V hat )
@@ -102,28 +102,27 @@ Journal of Computational and Graphical Statistics, 7, 434-455.
         #d = 2*V**2/VarV
         # Step 5: Compute the R-statistic
         #PSRF_stat = sqrt( ((d+3) / (d+1)) * VarV/W)
-
     return 1
 
 def test():
-    from numpy import reshape, arange, transpose
-    from numpy.linalg import norm
-    # Targe values computed from octave:
-    #    format long
-    #    S = reshape([1:15*6*7],[15,6,7]);
-    #    R = gelman(S,struct('n',6,'seq',7))
-    S = reshape(arange(1.,15*6*7+1)**-2, (15, 6, 7), order='F')
-    S = transpose(S, (0,2,1))
-    target = [1.06169861367116,   2.75325774624905,   4.46256647696399,
-              6.12792266170178,   7.74538715553575,   9.31276519155232]
-    R = gelman(S, portion=1)
-    #print R
-    #print "target", array(target), "\nactual", R
-    assert norm(R-target) < 1e-14
-    R = gelman(S, portion=.1)
-    assert norm(R - [-2, -2, -2, -2, -2, -2]) == 0
-    original = reshape(arange(1,20,.5), (19,2,1))
-    gelman(transpose( ),.5)
+        from numpy import reshape, arange, transpose
+        from numpy.linalg import norm
+        # Targe values computed from octave:
+        #    format long
+        #    S = reshape([1:15*6*7],[15,6,7]);
+        #    R = gelman(S,struct('n',6,'seq',7))
+        S = reshape(arange(1.,15*6*7+1)**-2, (15, 6, 7), order='F')
+        S = transpose(S, (0,2,1))
+        target = [1.06169861367116,   2.75325774624905,   4.46256647696399,
+                  6.12792266170178,   7.74538715553575,   9.31276519155232]
+        R = gelman(S, portion=1)
+        #print R
+        #print "target", array(target), "\nactual", R
+        assert norm(R-target) < 1e-14
+        R = gelman(S, portion=.1)
+        assert norm(R - [-2, -2, -2, -2, -2, -2]) == 0
+        original = reshape(arange(1,20,.5), (19,2,1))
+        gelman(transpose( ),.5)
 
 if __name__ == "__main__":
     test()

@@ -77,7 +77,7 @@ import re
 import gzip
 
 import numpy
-from numpy import empty, sum, asarray, inf, argmax, hstack, dstack,array
+from numpy import empty, sum, asarray, inf, argmax, hstack, dstack,array,append
 from numpy import savetxt,loadtxt, reshape
 from .outliers import identify_outliers
 from .util import draw, RNG
@@ -264,8 +264,14 @@ class MCMCDraw(object):
         self._updateZ_index = 0
         self._updateZ_count = 0
         self._updateZ_draws = empty(Nupdate, 'i')
-        self._updateZ_Z_stat = empty( (Nupdate, Nvar) )
+        self._updateZ_Z_stat = array([])
         self._updateZ_CR_weight = empty( (Nupdate, Ncr) )
+        
+        #Ks Stat
+        self._updateKs_index = 0
+        self._updateKs_count = 0
+        self._updateKs_draws = empty(Nupdate, 'i')
+        self._updateKs_Ks_stat = empty( (Nupdate, Nvar) )
 
         self._outliers = []
 
@@ -417,21 +423,30 @@ class MCMCDraw(object):
         self._updateP_index = i
         
         
-    def _updateZ(self,Z_stat,CR_weight):
+    def _updateZ(self,Z_stat):
         """
         Updates Geweke Z Statistic
         Called from dream.py when a series of DE steps is completed and
         summary statistics/adaptations are ready to be stored.
         """
-        self._update_count += 1
+        self._updateZ_count += 1
         i = self._updateZ_index
         #print "update",i,self.draws,"\n Rstat",R_stat,"\n CR weight",CR_weight
-        self._updateZ_draws[i] = self.draws
-        self._updateZ_Z_stat = Z_stat
-        self._updateZ_CR_weight[i] = CR_weight
+        self._updateZ_draws[i] =  self.draws
+        #print 'CURRENTLY',self._updateZ_Z_stat.shape, Z_stat.shape
+        self._updateZ_Z_stat = append(self._updateZ_Z_stat ,Z_stat)
         i = i+1
         if i == len(self._updateZ_draws): i = 0
         self._updateZ_index = i
+        
+    def _updateKs(self,Ks_stat):
+        self._updateKs_count += 1
+        i = self._updateKs_index
+        self._updateKs_draws[i] = self.draws
+        self._updateKs_Ks_stat = Ks_stat
+        i = i+1
+        if i == len(self._updateKs_draws): i = 0
+        self._updateKs_index = i
         
     def _replace_outlier(self, old, new):
         """
@@ -688,7 +703,26 @@ class MCMCDraw(object):
             retval = [v[:self._updateP_count] for v in retval]
         #print retval, retval.shape
         return retval
+    
+        
+    def Z_stat(self):
+        self._unroll()
+        #print 'CHAIN',self.chains()[1], self.chains()[1].shape
+        
+        retval = self._updateZ_draws, self._updateZ_Z_stat
+        if self._updateZ_count == self._updateZ_index:
+            retval = [v[:self._updateZ_count] for v in retval]
+        #print retval, retval.shape
+        return retval
 
+    def Ks_stat(self):
+        self._unroll()
+        #print 'CHAIN',self.chains()[1], self.chains()[1].shape
+        retval = self._updateKs_draws, self._updateKs_Ks_stat
+        if self._updateKs_count == self._updateKs_index:
+            retval = [v[:self._updateKs_count] for v in retval]
+        #print retval, retval.shape
+        return retval
 
     def CR_weight(self):
         """

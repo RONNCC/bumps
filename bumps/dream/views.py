@@ -1,7 +1,7 @@
 from __future__ import division
 __all__ = ['plot_all', 'plot_corr', 'plot_corrmatrix',
            'plot_trace', 'plot_vars', 'plot_var',
-           'plot_R','plot_logp', 'format_vars','plot_Z']
+           'plot_R','plot_logp', 'format_vars','plot_Z','plot_Ks']
 
 import math
 import re
@@ -335,16 +335,28 @@ def plot_R(state, portion=1):
     legend(['P%d'%i for i in range(1,R2.shape[1]+1)])
     xlabel('Generation number')
     ylabel('PSRF')
+    
 def plot_Z(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel
-    #draw, R = state.R_stat()
+    draw, Z = state.Z_stat()
     #start = int((1-portion)*len(draw))
     #variance = var(R,axis=0)
-    plot(arange(1,9),arange(1,5,.5))
+    print 'Z',Z,Z.shape
+    plot(arange(0,len(Z)),Z[0:])
     title('Convergence history')
     #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     xlabel('Generation number')
-    ylabel('R')
+    ylabel('Z')
+    
+def plot_Ks(state):
+    from pylab import plot, title, legend, xlabel, ylabel
+    draws,Ks = state.Ks_stat()
+    #print 'KS',Ks
+    plot(range(len(Ks)),Ks,"o")
+    title('Chain Kstat History')
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    xlabel('Generation number')
+    ylabel('Kstat')
     
 def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel

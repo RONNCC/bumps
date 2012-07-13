@@ -7,6 +7,7 @@ import numpy
 from . import monitor, parameter
 from .history import History
 from .dream import MCMCModel
+from . import initpop
 
 dof = 0
 

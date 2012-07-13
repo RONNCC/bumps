@@ -108,6 +108,7 @@ from .state import MCMCDraw
 from .metropolis import metropolis, metropolis_dr, dr_step
 from .gelman import gelman,gelmanP
 from .geweke import geweke
+from .ksmirnof import ks
 from .crossover import AdaptiveCrossover
 from .diffev import de_step
 from .bounds import make_bounds_handler
@@ -292,7 +293,8 @@ def run_dream(dream):
         _, points, _ = state.chains()
         R_stat = gelman(points, portion=0.5)
         PR_stat = gelmanP(points,portion=0.5)
-        Z_stat = geweke(points, portion=0.25)
+        Z_stat = geweke(points,portion=.25)
+        Ks_stat = ks(points,p=.5)
         #print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic
         
@@ -306,7 +308,8 @@ def run_dream(dream):
         # Save update information
         state._update(R_stat=R_stat, CR_weight=dream.CR.weight)
         state._updateP(PR_stat=PR_stat, CR_weight=dream.CR.weight)
-        state._updateZ(Z_stat=Z_stat, CR_weight=dream.CR.weight)
+        state._updateZ(Z_stat=Z_stat)
+        state._updateKs(Ks_stat=Ks_stat)
 
 
 

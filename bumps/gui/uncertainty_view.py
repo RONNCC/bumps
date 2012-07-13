@@ -65,7 +65,20 @@ class ZStatView(PlotView):
         if event.problem != self.model: return
         self.plot_state = event.uncertainty_state
         self.plot()
-
+        
+class KsStatView(PlotView):
+    title = "Kolmogorov-Smirnof Statistic"
+    def plot(self):
+        if not self.plot_state: return
+        history = self.plot_state
+        import pylab
+        with self.pylab_interface:
+            dream_views.plot_Ks(history)
+            pylab.draw()
+    def OnFitProgress(self, event):
+        if event.problem != self.model: return
+        self.plot_state = event.uncertainty_state
+        self.plot()
 
 class TraceView(PlotView):
     title = "Parameter Trace"

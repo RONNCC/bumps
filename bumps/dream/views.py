@@ -335,9 +335,6 @@ def plot_R(state, portion=1):
     legend(['P%d'%i for i in range(1,R2.shape[1]+1)])
     xlabel('Generation number')
     ylabel('PSRF')
-    
-    print 'R',R[0]
-    print 'PR',R2[0]
 def plot_Z(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel
     #draw, R = state.R_stat()

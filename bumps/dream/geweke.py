@@ -7,29 +7,33 @@ from __future__ import division
 from numpy import var, mean, ones, sqrt,sum,transpose,reshape
 def geweke(a,portion):
     return geweke1(a,portion)
-def geweke1(sequences, portion=0.5):
+def geweke1(sequences, portion=0.25):
     """
 Calculates the Geweke convergence diagnostic
 
-For more information please refer to: Gelman, A. and D.R. Rubin, 1992.
-Inference from Iterative Simulation Using Multiple Sequences,
-Statistical Science, Volume 7, Issue 4, 457-472.
-doi:10.1214/ss/1177011136
+Refer to support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.htm#statug_introbayes_sect008.htm
 """
 
     # Find the size of the sample
     chain_len,Nchains,Nvar = sequences.shape
-
     # Only use the last portion of the sample
-    chain_len = int(chain_len*portion)
-    sequences = sequences[-chain_len:]
 
+    Z_stat = 0
     if chain_len < 2:
         # Set the R-statistic to a large value
-        R_stat = -2 * ones(Nvar)
+        Z_stat = -2 * ones(Nvar)
     else:
+        new_len = int(chain_len*portion)
+        seq1 = sequences[:chain_len]
+        seq2 = sequences[-chain_len:]
         # Step 1: Determine the sequence means
-        meanSeq = mean(sequences, axis=0)
+        meanseq1 = mean(seq1, axis=0)
+        meanseq2 = mean(seq2, axis=0)
+        
+        
+        
+        #Step 2: Spectral Density Estimates
+        
 
         # Step 1: Determine the variance between the sequence means
         B = chain_len * var(meanSeq, axis=0, ddof=1)

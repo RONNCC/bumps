@@ -6,9 +6,9 @@ import numpy
 
 from . import monitor, parameter
 from .history import History
-from . import initpop
 from .dream import MCMCModel
 
+dof = 0
 
 class ConsoleMonitor(monitor.TimedUpdate):
     """

@@ -1,10 +1,11 @@
+
 """
 Convergence test statistic from Gelman and Rubin, 1992.
 """
 
 from __future__ import division
 
-from numpy import var, mean, ones, sqrt,sum,transpose,reshape
+from numpy import var, mean, ones, sqrt,sum,transpose,reshape,cov,corrcoef
 def gelman(a,portion):
     return gelman1(a,portion)
 
@@ -57,17 +58,18 @@ doi:10.1214/ss/1177011136
 
 def gelmanP1(sequences, portion=0.5):
     """
-Calculates the R-statistic convergence diagnostic
+Calculates the PSRF Refined Version convergence diagnostic
 
-For more information please refer to: Gelman, A. and D.R. Rubin, 1992.
-Inference from Iterative Simulation Using Multiple Sequences,
-Statistical Science, Volume 7, Issue 4, 457-472.
-doi:10.1214/ss/1177011136
+For more information please refer to: 
+Brooks, S. P. and Gelman, A. (1997), 
+"General Methods for Monitoring Convergence  of Iterative Simulations," 
+Journal of Computational and Graphical Statistics, 7, 434-455. 
 """
 
     # Find the size of the sample
     chain_len,Nchains,Nvar = sequences.shape
-
+    #useful for its relation to equation but only copies of the above variables
+    N, M = chain_len, Nchains
     # Only use the last portion of the sample
     chain_len = int(chain_len*portion)
     sequences = sequences[-chain_len:]
@@ -76,28 +78,32 @@ doi:10.1214/ss/1177011136
         # Set the R-statistic to a large value
         R_stat = -2 * ones(Nvar)
     else:
-        # Step 1: Determine the sequence means
         meanSeq = mean(sequences, axis=0)
-
-        # Step 1: Determine the variance between the sequence means
-        B = chain_len * var(meanSeq, axis=0, ddof=1)
-
-        # Step 2: Compute the variance of the various sequences
+        #mean_meanSeq = mean(meanSeq,axis=0)
         varSeq = var(sequences, axis=0, ddof=1)
-
-        # Step 2: Calculate the average of the within sequence variances
+        
+        
+        B = chain_len * var(meanSeq, axis=0, ddof=1)
         W = mean(varSeq,axis=0)
-
-        # Step 3: Estimate the target mean
-        #mu = mean(meanSeq)
-
-        # Step 4: Estimate the target variance (Eq. 3)
+        
         sigma2 = ((chain_len - 1)/chain_len) * W + (1/chain_len) * B
-
+        
+        #Posterior Variance Estimate, V hat
+        V = sigma2 + B/(M*N)
+        PRSF = V/W
+        # d degrees of freedom
+        #d = 
+        #Variance Hat ( V hat )
+        #VarV = ( ((N-1)/N)**2) *(1/M)*varSeq + \
+        #(((M+1)/(N*M))**2) * (2/M-1)*(B)**2  + \
+        #2*( (M+1)*(N-1)/((N**2) *M)*(N/M))#(cov(varSeq,meanSeq**2) - 2*meanSeq*cov(varSeq**2, meanSeq ))
+        #print VarV.shape
+        #d hat
+        #d = 2*V**2/VarV
         # Step 5: Compute the R-statistic
-        R_stat = sqrt((Nchains + 1)/Nchains * sigma2 / W - (chain_len-1)/Nchains/chain_len);
+        #PSRF_stat = sqrt( ((d+3) / (d+1)) * VarV/W)
 
-    return R_stat
+    return 1
 
 def test():
     from numpy import reshape, arange, transpose

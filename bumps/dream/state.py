@@ -77,7 +77,7 @@ import re
 import gzip
 
 import numpy
-from numpy import empty, sum, asarray, inf, argmax, hstack, dstack,array,append
+from numpy import empty, sum, asarray, inf, argmax, hstack, dstack,array,append,vstack,concatenate,dtype
 from numpy import savetxt,loadtxt, reshape
 from .outliers import identify_outliers
 from .util import draw, RNG
@@ -269,7 +269,7 @@ class MCMCDraw(object):
         self._updateZ_index = 0
         self._updateZ_count = 0
         self._updateZ_draws = empty(Nupdate, 'i')
-        self._updateZ_Z_stat = array([])
+        self._updateZ_Z_stat = []
         self._updateZ_CR_weight = empty( (Nupdate, Ncr) )
         
         #Ks Stat
@@ -439,7 +439,8 @@ class MCMCDraw(object):
         #print "update",i,self.draws,"\n Rstat",R_stat,"\n CR weight",CR_weight
         self._updateZ_draws[i] =  self.draws
         #print 'CURRENTLY',self._updateZ_Z_stat.shape, Z_stat.shape
-        self._updateZ_Z_stat = append(self._updateZ_Z_stat ,Z_stat)
+        self._updateZ_Z_stat.append(Z_stat)
+        #print 'OVERALLZ',self._updateZ_Z_stat
         i = i+1
         if i == len(self._updateZ_draws): i = 0
         self._updateZ_index = i
@@ -715,7 +716,6 @@ class MCMCDraw(object):
     def Z_stat(self):
         self._unroll()
         #print 'CHAIN',self.chains()[1], self.chains()[1].shape
-        
         retval = self._updateZ_draws, self._updateZ_Z_stat
         if self._updateZ_count == self._updateZ_index:
             retval = [v[:self._updateZ_count] for v in retval]
@@ -885,13 +885,10 @@ def _sample(state, portion, vars, selection):
     Return a sample from a set of chains.
     """
     draw, chains, logp = state.chains()
-<<<<<<< HEAD
     if portion is None:
         portion = 1
     start = int((1-portion)*len(draw))
-=======
-    start = int((1-portion)*len(draw)) if portion else 0
->>>>>>> 55aced37eff3ab34ab8a4f5dae7e7b508e247525
+
 
     # Collect the subset we are interested in
     chains = chains[start:,state._good_chains,:]

@@ -330,11 +330,8 @@ class FitProblem(object):
                        if not isinstance(p.bounds, mbounds.Unbounded)]
         self.dof = self.model_points() - len(self.parameters)
         if self.dof <= 0:
-<<<<<<< HEAD
+
             raise ValueError("Not enough data for fit (Degrees of Freedom <=0)")
-=======
-            raise ValueError("Need more data points than fitting parameters")
->>>>>>> 55aced37eff3ab34ab8a4f5dae7e7b508e247525
         #self.constraints = pars.constraints()
     def model_parameters(self):
         """

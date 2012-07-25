@@ -28,7 +28,11 @@ def plot_all(state, portion=1.0, figfile=None):
     figure(); plot_logp(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-logp")
+<<<<<<< HEAD
     def corr(): 
+=======
+    if state.Nvar <= 15:
+>>>>>>> 55aced37eff3ab34ab8a4f5dae7e7b508e247525
         figure(); plot_corrmatrix(state, portion=portion)
         if state.title: suptitle(state.title)
         if figfile != None: savefig(figfile+"-corr")
@@ -308,13 +312,14 @@ def plot_trace(state, var=0, portion=1):
     from pylab import plot, title, xlabel, ylabel
 
     draw, points, _ = state.chains()
-    start = int((1-portion)*len(draw))
+    start = int((1-portion)*len(draw)) if portion else 0
     plot(arange(start,len(points))*state.thinning,
          squeeze(points[start:,state._good_chains,var]))
     title('Parameter history for variable %d'%(var+1))
     xlabel('Generation number')
     ylabel('Parameter value')
 
+<<<<<<< HEAD
 def plot_R(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel,subplot,suptitle
     
@@ -323,6 +328,13 @@ def plot_R(state, portion=1):
     draw, R = state.R_stat()
     start = int((1-portion)*len(draw))
     subplot(211, title = 'Gelman R Statistic' )
+=======
+def plot_R(state, portion=None):
+    from pylab import plot, title, legend, xlabel, ylabel
+
+    draw, R = state.R_stat()
+    start = int((1-portion)*len(draw)) if portion else 0
+>>>>>>> 55aced37eff3ab34ab8a4f5dae7e7b508e247525
     plot(arange(start,len(R)), R[start:])
     xlabel('Generation number')
     ylabel('R')
@@ -362,7 +374,7 @@ def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel
 
     draw, logp = state.logp()
-    start = int((1-portion)*len(draw))
+    start = int((1-portion)*len(draw)) if portion else 0
     plot(arange(start,len(logp)), logp[start:], '.', markersize=1)
     title(r'Log Likelihood History')
     xlabel('Generation number')

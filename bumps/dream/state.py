@@ -89,7 +89,7 @@ CREATE = open
 
 def save_state(state, filename):
     # Build 2-D data structures
-    draws, logp = state.logp()
+    draws, logp = state.logp(full=True)
     _, AR = state.acceptance_rate()
     chain = hstack((draws[:,None], AR[:,None], logp))
 
@@ -215,6 +215,11 @@ class MCMCDraw(object):
     """
     _labels = None
     title = None
+    @property
+    def Nvar(self):
+        """Number of parameters in the fit"""
+        return self._thin_point.shape[2]
+
     def __init__(self, Ngen, Nthin, Nupdate, Nvar, Npop, Ncr, thinning):
         # Total number of draws so far
         self.draws = 0
@@ -596,7 +601,7 @@ class MCMCDraw(object):
             self._good_chains = slice(None,None)
         else:
             Ngen = chains.shape[0]
-            start = int(Ngen*portion)
+            start = int(Ngen*(1-portion)) if portion else 0
             outliers = identify_outliers(test, logp[start:], chains[-1])
             #print "outliers",outliers
             #print logp.shape, chains.shape
@@ -605,7 +610,7 @@ class MCMCDraw(object):
             #print self._good_chains
 
 
-    def logp(self):
+    def logp(self, full=False):
         """
         Return the iteration number and the log likelihood for each point in
         the individual sequences in that iteration.
@@ -617,13 +622,15 @@ class MCMCDraw(object):
 
         Note that draw[i] represents the total number of samples taken,
         including those for the samples in logp[i].
+
+        If full is True, then return all chains, not just good chains.
         """
         self._unroll()
         retval = self._gen_draws, self._gen_logp
         if self.generation == self._gen_index:
             retval = [v[:self.generation] for v in retval]
         draws,logp = retval
-        return draws,logp[:,self._good_chains]
+        return draws,(logp if full else logp[:,self._good_chains])
 
     def acceptance_rate(self):
         """
@@ -878,9 +885,13 @@ def _sample(state, portion, vars, selection):
     Return a sample from a set of chains.
     """
     draw, chains, logp = state.chains()
+<<<<<<< HEAD
     if portion is None:
         portion = 1
     start = int((1-portion)*len(draw))
+=======
+    start = int((1-portion)*len(draw)) if portion else 0
+>>>>>>> 55aced37eff3ab34ab8a4f5dae7e7b508e247525
 
     # Collect the subset we are interested in
     chains = chains[start:,state._good_chains,:]

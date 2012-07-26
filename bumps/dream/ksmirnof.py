@@ -16,9 +16,13 @@ def ks(seq,p=0.5):
     def ksm(chain):
         #only return the KS statistic value and not the 2 sided p tail.
         return ks_2samp(chain[:p*chlen],chain[-p*chlen:])[0]
-    samp = apply_along_axis(ksm,0,seq)
+    def ksmpt(chain):
+    #only return the KS statistic value and not the 2 sided p tail.
+        return ks_2samp(chain[:p*chlen],chain[-p*chlen:])[1]
+    sampks = apply_along_axis(ksm,0,seq)
+    samppt = apply_along_axis(ksmpt,0,seq)
     #print 'SAMP',samp.shape
-    return samp.flatten().tolist()
+    return (sampks.flatten().tolist(),samppt.flatten().tolist())
     #return [2,2*random()]
     #print 'MEAN SHAPE',mean_seqs.shape,'SEQ1',seq1.shape,'SEQ2',seq2.shape,length,chains1.shape,chains2.shape
 

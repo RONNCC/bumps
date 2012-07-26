@@ -310,7 +310,7 @@ def run_dream(dream):
         state._update(R_stat=R_stat, CR_weight=dream.CR.weight)
         state._updateP(PR_stat=PR_stat, CR_weight=dream.CR.weight)
         state._updateZ(Z_stat=Z_stat)
-        state._updateKs(Ks_stat=Ks_stat)
+        state._updateKs(Ks_stat=Ks_stat[0],ptail=Ks_stat[1])
 
 
 

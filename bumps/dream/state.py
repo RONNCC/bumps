@@ -277,6 +277,7 @@ class MCMCDraw(object):
         self._updateKs_count = 0
         self._updateKs_draws = empty(Nupdate, 'i')
         self._updateKs_Ks_stat = []
+        self._updateKs_Ks_ptail = []
         self._outliers = []
 
         # Query functions will not return outlier chains; initially, all
@@ -444,11 +445,12 @@ class MCMCDraw(object):
         if i == len(self._updateZ_draws): i = 0
         self._updateZ_index = i
         
-    def _updateKs(self,Ks_stat):
+    def _updateKs(self,Ks_stat,ptail):
         self._updateKs_count += 1
         i = self._updateKs_index
         self._updateKs_draws[i] = self.draws
         self._updateKs_Ks_stat.append(Ks_stat)
+        self._updateKs_Ks_ptail.append(ptail)
         i = i+1
         if i == len(self._updateKs_draws): i = 0
         self._updateKs_index = i
@@ -724,7 +726,7 @@ class MCMCDraw(object):
     def Ks_stat(self):
         self._unroll()
         #print 'CHAIN',self.chains()[1], self.chains()[1].shape
-        retval = self._updateKs_draws, self._updateKs_Ks_stat
+        retval = self._updateKs_draws, self._updateKs_Ks_stat,self._updateKs_Ks_ptail
         if self._updateKs_count == self._updateKs_index:
             retval = [v[:self._updateKs_count] for v in retval]
         #print retval, retval.shape

@@ -350,14 +350,21 @@ def plot_Z(state, portion=1):
     ylabel('Z')
     
 def plot_Ks(state):
-    from pylab import plot, title, legend, xlabel, ylabel
-    draws,Ks = state.Ks_stat()
+    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot
+    suptitle('Kolmogorov-Smirnov Two Sample Statistic')
+    draws,Ks,ptail = state.Ks_stat()
     #print 'KS',Ks
+    subplot(211,title = 'K Value')
     plot(range(len(Ks)),Ks)
-    title('Chain Kstat History')
-    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     xlabel('Generation number')
     ylabel('Kstat')
+    
+    subplot(212,title = 'Ptail Value')
+    plot(range(len(ptail)),ptail)
+    xlabel('Generation number')
+    ylabel('Two Sided Ptail')
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+
     
 def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel

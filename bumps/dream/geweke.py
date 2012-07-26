@@ -41,7 +41,9 @@ Refer to:
         #Z_stat is now the Z score for every chain and parameter in that with shape (chains,vars)
         
         #To make it easier to look at, return the average for the vars.
-        Avg_Z = mean(Z_stat,axis=0)
+        if 0:
+            Avg_Z = mean(Z_stat,axis=0)
+        Avg_Z = Z_stat
         #Print absolute value log so it looks cleaner
         LAvg_Z = log10(abs(Avg_Z))
     return LAvg_Z.tolist()

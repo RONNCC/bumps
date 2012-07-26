@@ -323,7 +323,7 @@ def plot_R(state, portion=1):
     suptitle('Convergence history')
     draw, R = state.R_stat()
     start = int((1-portion)*len(draw))
-    subplot(211, title = 'Gelman R Statistic' )
+    subplot(211, title = 'Gelman PSRF Statistic' )
     plot(arange(start,len(R)), R[start:])
     xlabel('Generation number')
     ylabel('R')

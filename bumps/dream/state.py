@@ -276,8 +276,7 @@ class MCMCDraw(object):
         self._updateKs_index = 0
         self._updateKs_count = 0
         self._updateKs_draws = empty(Nupdate, 'i')
-        self._updateKs_Ks_stat = empty( (Nupdate, Nvar) )
-
+        self._updateKs_Ks_stat = []
         self._outliers = []
 
         # Query functions will not return outlier chains; initially, all
@@ -449,7 +448,7 @@ class MCMCDraw(object):
         self._updateKs_count += 1
         i = self._updateKs_index
         self._updateKs_draws[i] = self.draws
-        self._updateKs_Ks_stat = Ks_stat
+        self._updateKs_Ks_stat.append(Ks_stat)
         i = i+1
         if i == len(self._updateKs_draws): i = 0
         self._updateKs_index = i

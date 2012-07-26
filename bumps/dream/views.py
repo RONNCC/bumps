@@ -353,7 +353,7 @@ def plot_Ks(state):
     from pylab import plot, title, legend, xlabel, ylabel
     draws,Ks = state.Ks_stat()
     #print 'KS',Ks
-    plot(range(len(Ks)),Ks,"o")
+    plot(range(len(Ks)),Ks)
     title('Chain Kstat History')
     #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     xlabel('Generation number')

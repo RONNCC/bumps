@@ -9,7 +9,7 @@ from numpy import var, mean, ones, sqrt,sum,transpose,reshape,cov,corrcoef,array
 from random import random
 from scipy.stats import ks_2samp
 
-def ks(seq,p=0.5):    
+def ks(seq,p=0.25):    
     #uses mean of parameters as per ROOT:
     #
     chlen,nchains,nvars = seq.shape
@@ -19,8 +19,8 @@ def ks(seq,p=0.5):
     def ksmpt(chain):
     #only return the KS statistic value and not the 2 sided p tail.
         return ks_2samp(chain[:p*chlen],chain[-p*chlen:])[1]
-    sampks = apply_along_axis(ksm,0,seq)
-    samppt = apply_along_axis(ksmpt,0,seq)
+    sampks = apply_along_axis(ksm,0,reshape(seq, (chlen*nchains,nvars)))
+    samppt = apply_along_axis(ksmpt,0,reshape(seq, (chlen*nchains,nvars)))
     #print 'SAMP',samp.shape
     return (sampks.flatten().tolist(),samppt.flatten().tolist())
     #return [2,2*random()]

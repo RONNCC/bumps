@@ -43,9 +43,17 @@ Refer to:
         #To make it easier to look at, return the average for the vars.
         if 0:
             Avg_Z = mean(Z_stat,axis=0)
+            LAvg_Z = log10(abs(Avg_Z))
+            return LAvg_Z.tolist()
+        else:
+            Avg_Z = Z_stat
+            LAvg_Z = log10(abs(Avg_Z))
+            return LAvg_Z.flatten().tolist()
         Avg_Z = Z_stat
         #Print absolute value log so it looks cleaner
-        LAvg_Z = log10(abs(Avg_Z))
+        
+        
+        
     return LAvg_Z.tolist()
 def test():
     raise NotImplementedError

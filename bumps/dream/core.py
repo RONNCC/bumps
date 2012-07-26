@@ -294,7 +294,7 @@ def run_dream(dream):
         R_stat = gelman(points, portion=0.5)
         PR_stat = gelmanP(points,portion=0.5)
         Z_stat = geweke(points,portion=.25)
-        print 'ZSTAT',Z_stat
+        #print 'ZSTAT',Z_stat
         Ks_stat = ks(points,p=.5)
         #print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic

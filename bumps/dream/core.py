@@ -201,6 +201,7 @@ def run_dream(dream):
     # Record initial state
     allocate_state(dream)
     state = dream.state
+    state._updateDof(_Nvar)
     state.labels = dream.model.labels
     previous_draws = state.draws
     if previous_draws:
@@ -292,10 +293,10 @@ def run_dream(dream):
         # Calculate Gelman and Rubin convergence diagnostic
         _, points, _ = state.chains()
         R_stat = gelman(points, portion=0.5)
-        PR_stat = gelmanP(points,portion=0.5)
+        PR_stat = gelmanP(R_stat)
         Z_stat = geweke(points,portion=.25)
         #print 'ZSTAT',Z_stat
-        Ks_stat = ks(points,p=.5)
+        Ks_stat = ks(points,p=.25)
         #print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic
         
@@ -308,7 +309,7 @@ def run_dream(dream):
 
         # Save update information
         state._update(R_stat=R_stat, CR_weight=dream.CR.weight)
-        state._updateP(PR_stat=PR_stat, CR_weight=dream.CR.weight)
+        state._updateP(PR_stat=PR_stat)
         state._updateZ(Z_stat=Z_stat)
         state._updateKs(Ks_stat=Ks_stat[0],ptail=Ks_stat[1])
 

@@ -51,57 +51,59 @@ doi:10.1214/ss/1177011136
 
     return R_stat
 
-def gelmanP(sequences, portion=0.5):
+def gelmanP(R_stat,dof=None):
     """
-Calculates the PSRF Refined Version convergence diagnostic
+    Calculates the PSRF Refined Version convergence diagnostic
+    
+    For more information please refer to: 
+    Brooks, S. P. and Gelman, A. (1997), 
+    "General Methods for Monitoring Convergence  of Iterative Simulations," 
+    Journal of Computational and Graphical Statistics, 7, 434-455. 
+    """
 
-For more information please refer to: 
-Brooks, S. P. and Gelman, A. (1997), 
-"General Methods for Monitoring Convergence  of Iterative Simulations," 
-Journal of Computational and Graphical Statistics, 7, 434-455. 
-"""
-
-    # Find the size of the sample
-    chain_len,Nchains,Nvar = sequences.shape
-    #useful for its relation to equation but only copies of the above variables
-    N, M = chain_len, Nchains
-    # Only use the last portion of the sample
-    chain_len = int(chain_len*portion)
-    sequences = sequences[-chain_len:]
-
-    if chain_len < 2:
-        # Set the R-statistic to a large value
-        R_stat = -2 * ones(Nvar)
-    else:
-        meanSeq = mean(sequences, axis=0)
-        mean_meanSeq = mean(meanSeq,axis=0)
-        varSeq = var(sequences, axis=0, ddof=1)
-        
-        B = chain_len * var(meanSeq, axis=0, ddof=1)
-        W = mean(varSeq,axis=0)
-        
-        sigma2 = ((chain_len - 1)/chain_len) * W + (1/chain_len) * B
-        
-        #Posterior Variance Estimate, V hat
-        V = sigma2 + B/(M*N)
-        
-        if 0:
-            # Simple PSRF
-            PSRF = sqrt(V/W)
-        else:
-            pass
-            # Refined version (Brooks and Gelman, 1998)
-        # d degrees of freedom
-        #d = 
-        #Variance Hat ( V hat )
-        #VarV = ( ((N-1)/N)**2) *(1/M)*varSeq + \
-        #(((M+1)/(N*M))**2) * (2/M-1)*(B)**2  + \
-        #2*( (M+1)*(N-1)/((N**2) *M)*(N/M))#(cov(varSeq,meanSeq**2) - 2*meanSeq*cov(varSeq**2, meanSeq ))
-        #print VarV.shape
-        #d hat
-        #d = 2*V**2/VarV
-        # Step 5: Compute the R-statistic
-        #PSRF_stat = sqrt( ((d+3) / (d+1)) * VarV/W)
+#    # Find the size of the sample
+#    chain_len,Nchains,Nvar = sequences.shape
+#    #useful for its relation to equation but only copies of the above variables
+#    N, M = chain_len, Nchains
+#    # Only use the last portion of the sample
+#    chain_len = int(chain_len*portion)
+#    sequences = sequences[-chain_len:]
+#
+#    if chain_len < 2:
+#        # Set the R-statistic to a large value
+#        R_stat = -2 * ones(Nvar)
+#    else:
+#        meanSeq = mean(sequences, axis=0)
+#        mean_meanSeq = mean(meanSeq,axis=0)
+#        varSeq = var(sequences, axis=0, ddof=1)
+#        
+#        B = chain_len * var(meanSeq, axis=0, ddof=1)
+#        W = mean(varSeq,axis=0)
+#        
+#        sigma2 = ((chain_len - 1)/chain_len) * W + (1/chain_len) * B
+#        
+#        #Posterior Variance Estimate, V hat
+#        V = sigma2 + B/(M*N)
+#        
+#        if 0:
+#            # Simple PSRF
+#            PSRF = sqrt(V/W)
+#        else:
+#            pass
+#            # Refined version (Brooks and Gelman, 1998)
+#        # d degrees of freedom
+#        #d = 
+#        #Variance Hat ( V hat )
+#        #VarV = ( ((N-1)/N)**2) *(1/M)*varSeq + \
+#        #(((M+1)/(N*M))**2) * (2/M-1)*(B)**2  + \
+#        #2*( (M+1)*(N-1)/((N**2) *M)*(N/M))#(cov(varSeq,meanSeq**2) - 2*meanSeq*cov(varSeq**2, meanSeq ))
+#        #print VarV.shape
+#        #d hat
+#        #d = 2*V**2/VarV
+#        # Step 5: Compute the R-statistic
+#        #PSRF_stat = sqrt( ((d+3) / (d+1)) * VarV/W)
+#    return 1
+    #return R_stat
     return 1
 
 def test():

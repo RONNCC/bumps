@@ -203,6 +203,7 @@ def load_state(filename, skip=0, report=0):
     state._update_R_stat = stats[:,1:Nvar+1]
     state._update_CR_weight = stats[:,Nvar+1:]
     state._outliers = []
+    state._dof = None
 
     bestidx = numpy.argmax(point[:,0])
     state._best_logp = point[bestidx,0]
@@ -227,7 +228,7 @@ class MCMCDraw(object):
         # Maximum observed likelihood
         self._best_x = None
         self._best_logp = -inf
-
+        self._dof = None
         # Per generation iteration
         self.generation = 0
         self._gen_index = 0
@@ -349,7 +350,9 @@ class MCMCDraw(object):
         # existing chain), then this returns the last row in the array.
         return (self._thin_point[self._thin_index-1],
                 self._thin_logp[self._thin_index-1])
-
+    
+    def _updateDof(self,pdof):#passed dof
+        self._dof = pdof
 
     def _generation(self, new_draws, x, logp, accept, force_keep=False):
         """
@@ -369,7 +372,7 @@ class MCMCDraw(object):
             self._best_x = x[maxid,:]+0 # Force a copy
 
         # Record acceptance rate and cost
-        i = self._gen_index
+        i = self._gen_index 
         #print "generation",i,self.draws,"\n x",x,"\n logp",logp,"\n accept",accept
         self._gen_draws[i] = self.draws
         self._gen_acceptance_rate[i] = 100*sum(accept)/new_draws
@@ -412,7 +415,8 @@ class MCMCDraw(object):
         if i == len(self._update_draws): i = 0
         self._update_index = i
         
-    def _updateP(self, PR_stat, CR_weight):
+ 
+    def _updateP(self, PR_stat):
         """
         Updates Gelman R Statistic
         Called from dream.py when a series of DE steps is completed and
@@ -525,8 +529,7 @@ class MCMCDraw(object):
     def _unroll(self):
         """
         Unroll the circular queue so that data access can be done inplace.
-
-        Call this when done stepping, and before plotting.  Calls to
+        Call this when done stepping, and before plotting. Calls to
         logp, sample, etc. assume the data is already unrolled.
         """
         if self.generation > self._gen_index > 0:
@@ -555,7 +558,7 @@ class MCMCDraw(object):
             self._update_CR_weight[:] = numpy.roll(self._update_CR_weight,
                                                    -self._update_index, axis=0)
             self._update_index = 0
-
+            
     def remove_outliers(self, x, logp, test='IQR', portion=0.5):
         """
         Replace outlier chains with clones of good ones.  This should happen
@@ -697,12 +700,12 @@ class MCMCDraw(object):
         #from .gelman import gelman
         """
         Return the R-statistics convergence statistic for each variable.
-
+        
         For example, to plot the convergence of all variables over time::
-
-            draw, R = state.R_stat()
-            plot(draw, R)
-
+        
+        draw, R = state.R_stat()
+        plot(draw, R)
+        
         See :module:`dream.gelman` and references detailed therein.
         """
         self._unroll()

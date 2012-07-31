@@ -15,19 +15,33 @@ from .formatnum import format_uncertainty
 def plot_all(state, portion=1.0, figfile=None):
     from pylab import figure, savefig, suptitle
 
+
     figure(); vstats = plot_vars(state, portion=portion)
     if state.title: suptitle(state.title)
     print format_vars(vstats)
     if figfile != None: savefig(figfile+"-vars")
+    
     figure(); plot_trace(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-trace")
+    
     figure(); plot_R(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-R")
+    
     figure(); plot_logp(state, portion=portion)
     if state.title: suptitle(state.title)
     if figfile != None: savefig(figfile+"-logp")
+    
+    figure(); plot_Z(state, portion=portion)
+    if state.title: suptitle(state.title)
+    if figfile != None: savefig(figfile+"-Z")
+    
+    figure(); plot_Ks(state)
+    if state.title: suptitle(state.title)
+    if figfile != None: savefig(figfile+"-Ks")
+
+    
     if state.Nvar <= 15:
 
         figure(); plot_corrmatrix(state, portion=portion)

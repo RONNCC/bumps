@@ -7,9 +7,9 @@ from __future__ import division
 
 from numpy import var, mean, ones, sqrt,sum,transpose,reshape,cov,corrcoef,array,floor,apply_along_axis
 from random import random
-from scipy.stats import ks_2samp
+from scipy.stats import                                                                                                                                                                                                                                                                                                 
 
-def ks(seq,p=0.25):    
+def ks(seq,p=0.25):
     #uses mean of parameters as per ROOT:
     #
     chlen,nchains,nvars = seq.shape

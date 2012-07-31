@@ -344,12 +344,12 @@ def plot_R(state, portion=1):
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     
     #R2 = PR in this case, just the naming is different
-    draw, R2 = state.R_stat2()
-    subplot(212, title='Gelman Refined PSRF Statistic')
-    plot(arange(start,len(R2)), R2[start:])
-    legend(['P%d'%i for i in range(1,R2.shape[1]+1)])
-    xlabel('Generation number')
-    ylabel('PSRF')
+    #draw, R2 = state.R_stat2()
+    #subplot(212, title='Gelman Refined PSRF Statistic')
+    #plot(arange(start,len(R2)), R2[start:])
+    #legend(['P%d'%i for i in range(1,R2.shape[1]+1)])
+    #xlabel('Generation number')
+    #ylabel('PSRF')
     
 def plot_Z(state, portion=1):
     from pylab import plot, title, legend, xlabel, ylabel

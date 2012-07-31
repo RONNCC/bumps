@@ -7,7 +7,7 @@ from __future__ import division
 
 from numpy import var, mean, ones, sqrt,sum,transpose,reshape,cov,corrcoef,array,floor,apply_along_axis
 from random import random
-from scipy.stats import                                                                                                                                                                                                                                                                                                 
+from scipy.stats import ks_2samp                                                                                                                                                                                                                                                                                                
 
 def ks(seq,p=0.25):
     #uses mean of parameters as per ROOT:

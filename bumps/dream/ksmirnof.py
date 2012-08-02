@@ -13,6 +13,7 @@ def ks(seq,p=0.25):
     #uses mean of parameters as per ROOT:
     #
     chlen,nchains,nvars = seq.shape
+    print "ks",chlen,nchains,nvars
     def ksm(chain):
         #only return the KS statistic value and not the 2 sided p tail.
         return ks_2samp(chain[:p*chlen],chain[-p*chlen:])[0]

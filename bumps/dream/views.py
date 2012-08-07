@@ -341,13 +341,14 @@ def plot_R(state, portion=1):
     plot(arange(start,len(R)), R[start:])
     xlabel('Generation number')
     ylabel('R')
+    legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+
     subplot(212, title = 'Gelman difference')
     eDiff = exp(diff(R[start:]))
     plot(arange(start,len(eDiff)),eDiff)
     xlabel('Generation number')
     ylabel('R Difference')
 
-    legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     
     #R2 = PR in this case, just the naming is different
     #draw, R2 = state.R_stat2()

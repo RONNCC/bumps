@@ -280,6 +280,13 @@ class MCMCDraw(object):
         self._updateKs_Ks_stat = []
         self._updateKs_Ks_ptail = []
         self._outliers = []
+        
+        ##Median Statistics
+        
+        self._updateMed_index = 0
+        self._updateMed_count = 0
+        self._updateMed_draws = empty(Nupdate, 'i')
+        self._updateMed_Med = []
 
         # Query functions will not return outlier chains; initially, all
         # chains are marked as good.  Call mark_outliers to remove
@@ -458,6 +465,15 @@ class MCMCDraw(object):
         i = i+1
         if i == len(self._updateKs_draws): i = 0
         self._updateKs_index = i
+        
+    def _updateMed(self,Med):
+        self._updateMed_count += 1
+        i = self._updateMed_index
+        self._updateMed_draws[i] = self.draws
+        self._updateMed_Med.append(Med)    
+        i = i+1
+        if i == len(self._updateMed_draws): i = 0
+        self._update_Med_index = i
         
     def _replace_outlier(self, old, new):
         """
@@ -734,6 +750,13 @@ class MCMCDraw(object):
             retval = [v[:self._updateKs_count] for v in retval]
         #print retval, retval.shape
         return retval
+    
+    def Med(self):
+        self._unroll()
+        retval = self._updateMed_draws, self._updateMed_Med
+        if self._updateMed_count == self._updateMed_index:
+            retval = [v[:self._updateMed_count] for v in retval]
+        return retval   
 
     def CR_weight(self):
         """

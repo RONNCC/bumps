@@ -108,7 +108,8 @@ from .state import MCMCDraw
 from .metropolis import metropolis, metropolis_dr, dr_step
 from .gelman import gelman,gelmanP
 from .geweke import geweke
-from .ksmirnof import ks
+from .ksmirnov import ksmirnov as ks
+from .median import med
 from .crossover import AdaptiveCrossover
 from .diffev import de_step
 from .bounds import make_bounds_handler
@@ -296,7 +297,8 @@ def run_dream(dream):
         PR_stat = gelmanP(R_stat)
         Z_stat = geweke(points,portion=.25)
         #print 'ZSTAT',Z_stat
-        Ks_stat = ks(points,p=.25)
+        Ks_stat = ks(points,portion=.25)
+        Med = med(points,portion=.5,level=.32)
         #print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic
         
@@ -312,6 +314,7 @@ def run_dream(dream):
         state._updateP(PR_stat=PR_stat)
         state._updateZ(Z_stat=Z_stat)
         state._updateKs(Ks_stat=Ks_stat[0],ptail=Ks_stat[1])
+        state._updateMed(Med=Med)
 
 
 

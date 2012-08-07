@@ -1,13 +1,13 @@
 from __future__ import division
 __all__ = ['plot_all', 'plot_corr', 'plot_corrmatrix',
            'plot_trace', 'plot_vars', 'plot_var',
-           'plot_R','plot_logp', 'format_vars','plot_Z','plot_Ks']
+           'plot_R','plot_logp', 'format_vars','plot_Z','plot_Ks','plot_Med']
 
 import math
 import re
 
 import numpy
-from numpy import arange, squeeze, linspace, meshgrid, vstack, inf
+from numpy import arange, squeeze, linspace, meshgrid, vstack, inf,array,reshape,concatenate
 from . import corrplot
 from .stats import credible_interval, stats
 from .formatnum import format_uncertainty
@@ -389,3 +389,22 @@ def plot_logp(state, portion=1):
     title(r'Log Likelihood History')
     xlabel('Generation number')
     ylabel('Log likelihood at x[k]')
+
+def plot_Med(state,portion=1):
+    from pylab import plot, title, xlabel, ylabel
+    draw, vars =state.Med()
+    rvars = concatenate(array(vars),axis=1)
+    #print '-----<'
+    #print rvars,rvars.shape
+    flatten = zip(*rvars.tolist())
+    #print 'Flatten',flatten
+    #draw, logp = state.logp()
+    #start = int((1-portion)*len(draw)) if portion else 0
+    #print 'vars',vars
+    #print 'numpyvars',npv,npv.shape
+    plot(arange(rvars.shape[1]),flatten)
+    title(r'Median')
+    xlabel('Generation number')
+    ylabel('Median Trace')
+    
+    

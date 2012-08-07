@@ -110,7 +110,7 @@ def gelmanP(R_stat,dof=None):
     return 1
 
 def test():
-<<<<<<< HEAD
+
         from numpy import reshape, arange, transpose
         from numpy.linalg import norm
         # Targe values computed from octave:
@@ -129,24 +129,6 @@ def test():
         assert norm(R - [-2, -2, -2, -2, -2, -2]) == 0
         original = reshape(arange(1,20,.5), (19,2,1))
         gelman(transpose( ),.5)
-=======
-    from numpy import reshape, arange, transpose
-    from numpy.linalg import norm
-    # Targe values computed from octave:
-    #    format long
-    #    S = reshape([1:15*6*7],[15,6,7]);
-    #    R = gelman(S,struct('n',6,'seq',7))
-    S = reshape(arange(1.,15*6*7+1)**-2, (15, 6, 7), order='F')
-    S = transpose(S, (0,2,1))
-    target = [1.06169861367116,   2.75325774624905,   4.46256647696399,
-              6.12792266170178,   7.74538715553575,   9.31276519155232]
-    R = gelman(S, portion=1)
-    #print R
-    #print "target", array(target), "\nactual", R
-    assert norm(R-target) < 1e-14
-    R = gelman(S, portion=.1)
-    assert norm(R - [-2, -2, -2, -2, -2, -2]) == 0
->>>>>>> 0b59c09b640900b296d9d3acc87613e704787945
 
 if __name__ == "__main__":
     test()

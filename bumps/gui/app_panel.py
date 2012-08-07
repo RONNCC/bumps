@@ -43,7 +43,7 @@ from .summary_view import SummaryView
 from .parameter_view import ParameterView
 from .log_view import LogView
 from .convergence_view import ConvergenceView
-from .uncertainty_view import CorrelationView, UncertaintyView, TraceView, ModelErrorView,RStatView, ZStatView, KsStatView
+from .uncertainty_view import CorrelationView, UncertaintyView, TraceView, ModelErrorView,RStatView, ZStatView, KsStatView, MedStatView
 from .fit_dialog import OpenFitOptions
 from .fit_thread import (FitThread, EVT_FIT_PROGRESS, EVT_FIT_COMPLETE)
 from .util import nice
@@ -250,10 +250,11 @@ class AppPanel(wx.Panel):
             'R-stat': RStatView,
             'Z-stat': ZStatView,
             'Ks-stat': KsStatView,
+            'Med':MedStatView,
             }
         self.view_list = ['data','model','parameter',
                           'summary','log','convergence',
-                          'uncertainty','correlation','trace','error','R-stat','Z-stat','Ks-stat']
+                          'uncertainty','correlation','trace','error','R-stat','Z-stat','Ks-stat','Med']
         self.view = {}
         for v in self.view_list:
             if self.view_constructor[v]:
@@ -470,6 +471,7 @@ class AppPanel(wx.Panel):
             self.view['R-stat'].OnFitProgress(event)
             self.view['Z-stat'].OnFitProgress(event)
             self.view['Ks-stat'].OnFitProgress(event)
+            self.view['Med'].OnFitProgress(event)
             if event.message == 'uncertainty_final':
                 self.view['error'].OnFitProgress(event)
         else:

@@ -290,7 +290,6 @@ class MonosplineInterval(object):
         return numpy.hstack((self.y[0],[y.value for y in self.Cys] ,self.y[-1]))
 
     def theory(self):
-
         return monospline(self.Cx, self.Cy, self.xt)
     def residuals(self):
         return (self.theory()-self.y)/(self.dy)

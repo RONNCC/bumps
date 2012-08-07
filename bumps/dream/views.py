@@ -340,7 +340,7 @@ def plot_R(state, portion=1):
     subplot(211, title = 'Gelman PSRF Statistic' )
     plot(arange(start,len(R)), R[start:])
     subplot(212, title = 'Gelman difference')
-    plot(arange(start,len(R-1),exp(diff(R[start:])) ))
+    plot(arange(start,len(R)-1,exp(diff(R[start:])) ))
     xlabel('Generation number')
     ylabel('R')
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])

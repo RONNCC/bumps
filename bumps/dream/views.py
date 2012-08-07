@@ -339,10 +339,14 @@ def plot_R(state, portion=1):
     start = int((1-portion)*len(draw))
     subplot(211, title = 'Gelman PSRF Statistic' )
     plot(arange(start,len(R)), R[start:])
-    subplot(212, title = 'Gelman difference')
-    plot(arange(start,len(R)-1),exp(diff(R[start:])))
     xlabel('Generation number')
     ylabel('R')
+    subplot(212, title = 'Gelman difference')
+    eDiff = exp(diff(R[start:]))
+    plot(arange(start,len(eDiff)),eDiff)
+    xlabel('Generation number')
+    ylabel('R Difference')
+
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     
     #R2 = PR in this case, just the naming is different

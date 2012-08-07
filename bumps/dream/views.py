@@ -342,6 +342,7 @@ def plot_R(state, portion=1):
     xlabel('Generation number')
     ylabel('R')
     legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    
 
     subplot(212, title = 'Gelman difference')
     eDiff = exp(diff(R[start:]))

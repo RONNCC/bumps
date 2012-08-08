@@ -287,6 +287,9 @@ class MCMCDraw(object):
         self._updateMed_count = 0
         self._updateMed_draws = empty(Nupdate, 'i')
         self._updateMed_Med = []
+        
+        self._updateOt_stat = {}
+        
 
         # Query functions will not return outlier chains; initially, all
         # chains are marked as good.  Call mark_outliers to remove
@@ -438,7 +441,6 @@ class MCMCDraw(object):
         if i == len(self._updateP_draws): i = 0
         self._updateP_index = i
         
-        
     def _updateZ(self,Z_stat):
         """
         Updates Geweke Z Statistic
@@ -474,6 +476,15 @@ class MCMCDraw(object):
         i = i+1
         if i == len(self._updateMed_draws): i = 0
         self._update_Med_index = i
+        
+    def _updateOt(self,kargs):
+        for k,v in kargs.iteritems():
+            if k not in self._updateOt_stat:
+                self._updateOt_stat[k] = []
+            if k in self._updateOt_stat:
+                current = self._updateOt_stat[k]
+                current.append(v)
+                self._updateOt_stat[k] = current
         
     def _replace_outlier(self, old, new):
         """
@@ -751,12 +762,22 @@ class MCMCDraw(object):
         #print retval, retval.shape
         return retval
     
+    def Ad_stat(self):
+        self._unroll()
+        #print 'CHAIN',self.chains()[1], self.chains()[1].shape
+        retval = self._updateAd_draws, self._updateAd_stat
+        #print retval, retval.shape
+        return retval
+    
     def Med(self):
         self._unroll()
         retval = self._updateMed_draws, self._updateMed_Med
         if self._updateMed_count == self._updateMed_index:
             retval = [v[:self._updateMed_count] for v in retval]
         return retval   
+
+    def OtStat(self):
+        return self._updateOt_stat
 
     def CR_weight(self):
         """

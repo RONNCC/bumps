@@ -109,6 +109,7 @@ from .metropolis import metropolis, metropolis_dr, dr_step
 from .gelman import gelman,gelmanP
 from .geweke import geweke
 from .ksmirnov import ksmirnov as ks
+from .otstats import foil
 from .median import med
 from .crossover import AdaptiveCrossover
 from .diffev import de_step
@@ -299,7 +300,8 @@ def run_dream(dream):
         #print 'ZSTAT',Z_stat
         Ks_stat = ks(points,portion=.25)
         Med = med(points,portion=.5,level=.32)
-        #print 'EQUALS?',R_stat==Z_stat
+        Otstat = foil(points)
+                #print 'EQUALS?',R_stat==Z_stat
         # Calculate Geweke converge diagnostic
         
         if state.draws <= 0.1 * dream.draws:
@@ -315,6 +317,7 @@ def run_dream(dream):
         state._updateZ(Z_stat=Z_stat)
         state._updateKs(Ks_stat=Ks_stat[0],ptail=Ks_stat[1])
         state._updateMed(Med=Med)
+        state._updateOt(Otstat)
 
 
 

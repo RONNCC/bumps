@@ -387,6 +387,19 @@ def plot_Ks(state):
     ylabel('Two Sided Ptail')
     #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
 
+def plot_Ot(state):
+    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot
+    suptitle('Other Statistics')
+    Ot= state.OtStat()
+    test = Ot['cramervonmises']
+    print test
+    print '----------'
+    #print 'KS',Ks
+    plot(arange(10),arange(10))
+    xlabel('Generation number')
+    ylabel('Stat 1')
+    
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     
 def plot_logp(state, portion=1):
     from pylab import plot, title, xlabel, ylabel

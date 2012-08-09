@@ -391,10 +391,16 @@ def plot_Ot(state):
     from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot
     suptitle('Other Statistics')
     Ot= state.OtStat()
-    test = Ot['cramervonmises']
-    print test
-    print '----------'
-    #print 'KS',Ks
+    cpoints = Ot['cpoints']
+    
+    #cpoints
+    #[ ]
+    print 'CPOINTS'
+    print cpoints
+    a = array(cpoints)
+    print a
+    print a.shape
+    sys.exit()
     plot(arange(10),arange(10))
     xlabel('Generation number')
     ylabel('Stat 1')

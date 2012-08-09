@@ -112,7 +112,7 @@ def foil(seq, **kargs):
             actual = searchsorted(back, [front[ti] for ti in target])
             #return [exp(-0.5*(k-i)**2/k)/sqrt(2*pi*k) for k,i in zip(target,actual)]
             le=log10(e)
-            return [(-0.5*(k-i)**2/k - 0.5*log(2*pi*k))/le for k,i in zip(target,actual)]
+            return [(-0.5*(k-i)**2/k - 0.5*log(2*pi*k))*le for k,i in zip(target,actual)]
             #return ks_2samp(chain[:count], chain[-count:])
             #w = wilcoxon(chain[front:],chain[-back:])
             #print wilcoxon(chain[front:],chain[-back:])

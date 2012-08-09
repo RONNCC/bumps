@@ -8,7 +8,7 @@ import re
 import sys
 
 import numpy
-from numpy import arange, squeeze, linspace, meshgrid, vstack, inf,array,reshape,concatenate,diff,exp
+from numpy import arange, squeeze, linspace, meshgrid, vstack, inf,array,reshape,concatenate,diff,exp,var
 from . import corrplot
 from .stats import credible_interval, stats
 from .formatnum import format_uncertainty
@@ -400,10 +400,14 @@ def plot_Ot(state):
     #print cpoints
     a = array(cpoints)
     #print a
-    gen, var, cr = a.shape
-    b = reshape(a, (gen,var*cr))
+    gen, nvars, cr = a.shape
+    b = reshape(a, (gen,nvars*cr))
     c = b[:,:]
-    plot(arange(len(c)),c)
+    print c.shape
+    v = var(c,axis=0)
+    #print 'VAR2',var(c,axis=1)
+    plot(arange(len(c)),c,hold=True)
+    plot(linspace(0,len(c),len(v)), v,'--',linewidth=1,hold=True)
     xlabel('Generation number')
     ylabel('Stat 1')
     

@@ -5,6 +5,7 @@ __all__ = ['plot_all', 'plot_corr', 'plot_corrmatrix',
 
 import math
 import re
+import sys
 
 import numpy
 from numpy import arange, squeeze, linspace, meshgrid, vstack, inf,array,reshape,concatenate,diff,exp
@@ -395,13 +396,14 @@ def plot_Ot(state):
     
     #cpoints
     #[ ]
-    print 'CPOINTS'
-    print cpoints
+    #print 'CPOINTS'
+    #print cpoints
     a = array(cpoints)
-    print a
-    print a.shape
-    sys.exit()
-    plot(arange(10),arange(10))
+    #print a
+    gen, var, cr = a.shape
+    b = reshape(a, (gen,var*cr))
+    c = b[:,:]
+    plot(arange(len(c)),c)
     xlabel('Generation number')
     ylabel('Stat 1')
     

@@ -96,6 +96,21 @@ class MedStatView(PlotView):
         self.plot_state = event.uncertainty_state
         self.plot()
 
+
+class WStatView(PlotView):
+    title = "Wilcoxon Stat"
+    def plot(self):
+        if not self.plot_state: return
+        history = self.plot_state
+        import pylab
+        with self.pylab_interface:
+            dream_views.plot_Wstat(history)
+            pylab.draw()
+    def OnFitProgress(self, event):
+        if event.problem != self.model: return
+        self.plot_state = event.uncertainty_state
+        self.plot()
+
 class OtStatView(PlotView):
     title = "Ot View"
     def plot(self):
@@ -104,6 +119,21 @@ class OtStatView(PlotView):
         import pylab
         with self.pylab_interface:
             dream_views.plot_Ot(history)
+            pylab.draw()
+    def OnFitProgress(self, event):
+        if event.problem != self.model: return
+        self.plot_state = event.uncertainty_state
+        self.plot()
+        
+
+class RankStatView(PlotView):
+    title = "Rank Stat View"
+    def plot(self):
+        if not self.plot_state: return
+        history = self.plot_state
+        import pylab
+        with self.pylab_interface:
+            dream_views.plot_Rt(history)
             pylab.draw()
     def OnFitProgress(self, event):
         if event.problem != self.model: return

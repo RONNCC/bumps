@@ -1,7 +1,8 @@
 from scipy.stats import *
 import sys
 from scipy.stats.mstats import find_repeats
-from numpy import split,apply_along_axis,reshape,unique, sort
+from numpy import *
+from numpy.random import *
 ret  = {}
 def foil(seq, **kargs):  
     # two sample cramer von mises test
@@ -74,6 +75,57 @@ def foil(seq, **kargs):
             #tmp.append( [1.0* avg( (f_mid - f_lo) - (b_mid- b_lo))/avg([f_hi - f_lo, b_hi-b_lo])  ] )
             tmp.append([f_lo,f_mid,f_hi,b_lo,b_mid,b_hi])
         ret['cpoints']= tmp
+    def wilcox():
+        #returns 0 until size is at least 20.
+        #implementation uses value of sample size > 20 alghough usually n >= 10 is used.
+        chlen,nchains,nvars = seq.shape
+        def norm(W,p):
+            #print 'W,p',W,p
+            return (W/(1.0*count),p)
+        def wxn(chain):
+            front = len(chain)*portion
+            back = len(chain)*portion
+            #return ks_2samp(chain[:count], chain[-count:])
+            #w = wilcoxon(chain[front:],chain[-back:])
+            #print wilcoxon(chain[front:],chain[-back:])
+            #print wilcoxon(rand(100),rand(100))
+            #print 'WILCOX',w
+            #return norm(wilcoxon(chain[front:],chain[-back:]))
+            return wilcoxon(chain[front:],chain[-back:])
+        W,p = apply_along_axis(wxn,0,reshape(seq, (chlen*nchains,nvars)))
+        #print 'CHLEN',chlen
+        ret['wilcoxon'] = [W,p]
+        
+    def ranktest():
+        chlen,nchains,nvars = seq.shape
+        #returns 0 until size is at least 20.
+        #implementation uses value of sample size > 20 alghough usually n >= 10 is used.
+        chlen,nchains,nvars = seq.shape
+        def norm(W,p):
+            #print 'W,p',W,p
+            return (W/(1.0*count),p)
+        def wxn(chain):
+            N = len(chain)*portion
+            back = sort(chain[-N:])
+            front = sort(chain[:N])
+            target = [int(N*p) for p in 0.32, 0.5, 0.68]
+            actual = searchsorted(back, [front[ti] for ti in target])
+            #return [exp(-0.5*(k-i)**2/k)/sqrt(2*pi*k) for k,i in zip(target,actual)]
+            return [-0.5*(k-i)**2/k-0.5*log(2*pi*k) for k,i in zip(target,actual)]
+            #return ks_2samp(chain[:count], chain[-count:])
+            #w = wilcoxon(chain[front:],chain[-back:])
+            #print wilcoxon(chain[front:],chain[-back:])
+            #print wilcoxon(rand(100),rand(100))
+            #print 'WILCOX',w
+            #return norm(wilcoxon(chain[front:],chain[-back:]))
+            #return wilcoxon(chain[front:],chain[-back:])
+        vars = apply_along_axis(wxn,0,reshape(seq, (chlen*nchains,nvars)))
+        ret['rankstat'] = vars
+        
+        
+        
+    ranktest()
+    wilcox()
     cpoints()
     return ret
     #ret['friedman'] = friedmanchisquare( )

@@ -389,8 +389,8 @@ def plot_Ks(state):
     #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
 
 def plot_Ot(state):
-    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot
-    suptitle('Other Statistics')
+    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot, clf
+    suptitle('Crit Points')
     Ot= state.OtStat()
     cpoints = Ot['cpoints']
     
@@ -403,14 +403,60 @@ def plot_Ot(state):
     gen, nvars, cr = a.shape
     b = reshape(a, (gen,nvars*cr))
     c = b[:,:]
-    print c.shape
-    v = var(c,axis=0)
+    #print c.shape
+    #v = var(c,axis=0)
     #print 'VAR2',var(c,axis=1)
+    clf()
     plot(arange(len(c)),c,hold=True)
-    plot(linspace(0,len(c),len(v)), v,'--',linewidth=1,hold=True)
+    L  = [" ".join((var,stat)) for var in ("f1", "b1", "f2", "b2") for stat in ('lo', 'mid', 'hi')]
+    legend(L)
+    #plot(linspace(0,len(c),len(v)), v,'--',linewidth=1,hold=True)
     xlabel('Generation number')
     ylabel('Stat 1')
     
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    
+def plot_Wstat(state):
+    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot
+    suptitle('Wilcoxon')
+    Ot= state.OtStat()
+    wstat = Ot['wilcoxon']
+    #print wstat
+    #print 'VAR2',var(c,axis=1)
+    #plot(arange(len(c)),c,hold=True)
+    plot(arange(10),arange(10))
+    #plot(linspace(0,len(c),len(v)), v,'--',linewidth=1,hold=True)
+    xlabel('Generation number')
+    ylabel('Stat 1')
+    
+    #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
+    
+def plot_Rt(state):
+    from pylab import plot, title, legend, xlabel, ylabel, suptitle,subplot,clf
+    suptitle('Rank Stat Test')
+    Ot= state.OtStat()
+    rtstat = Ot['rankstat']
+    arr = array(rtstat)
+    #print 'rtstat'
+    #print rtstat
+    #print arr.shape
+    #print wstat
+    #print 'VAR2',var(c,axis=1)
+    #plot(arange(len(c)),c,hold=True)
+    gen = arange(arr.shape[0])
+    p0_32, p0_50, p0_68 = arr[:,0,0], arr[:,1,0], arr[:,2,0]
+    p1_32, p1_50, p1_68 = arr[:,0,1], arr[:,1,1], arr[:,2,1]
+    clf()
+    plot(gen,p0_32,hold=True)
+    plot(gen,p0_50,hold=True)
+    plot(gen,p0_68,hold=True)
+    plot(gen,p1_32,hold=True)
+    plot(gen,p1_50,hold=True)
+    plot(gen,p1_68,hold=True)
+    legend(("P0 32", "P0 50", "P0 68", "P1 32", "P1 50", "P1 68", ))
+   #plot(linspace(0,len(c),len(v)), v,'--',linewidth=1,hold=True)
+    xlabel('Generation number')
+    ylabel('Stat 1')
     #legend(['P%d'%i for i in range(1,R.shape[1]+1)])
     
 def plot_logp(state, portion=1):

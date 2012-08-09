@@ -1,5 +1,5 @@
 import pylab
-from numpy import sin, cos, linspace, meshgrid, e, pi, sqrt, array, exp
+from numpy import sin, cos, linspace, meshgrid, e, pi, sqrt, asarray, exp
 from bumps.names import *
 
 def prod(L):
@@ -30,9 +30,17 @@ def sin_plus_quadratic(x=0,y=0):
     width = 6        # size of the acceptance region
     return (barrier*(sin(fx*x) + sin(fy*y)+2) + ((x-cx)/mx)**2 + ((y-cy)/my)**2)/width
 
+def gauss(x):
+    n = len(x)
+    return 0.5*sum(x[i]**2 for i in range(n))
+
 def ackley(x):
     n = len(x)
     return -20*exp(-0.2*sqrt(sum(xi**2 for xi in x)/n))-exp(sum(cos(2*pi*xi) for xi in x)/n) + 20 + e
+
+def recentered_ackley(c):
+    return lambda x: ackley(tuple((xi-ci) for xi,ci in zip(x,c)))
+    #return lambda x: ackley(asarray(x)-asarray(c))
 
 def griewank(x):
     return 1 + sum(xi**2 for xi in x)**2/4000 - prod(cos(xi/sqrt(i+1)) for i,xi in enumerate(x))
@@ -51,11 +59,13 @@ def rosenbrock(x):
     return sum((1-x[i])**2 + 100*(x[i+1]-x[i]**2)**2 for i in range(n-1))
 
 #nllf = sin_plus_quadratic
-nllf = fxy(ackley)
+#nllf = fxy(ackley)
 #nllf = fxy(griewank)
 #nllf = fxy(rastrigin)
 #nllf = fxy(rosenbrock)
 #nllf = fxyz(rosenbrock)
+#nllf = fxy(recentered_ackley([30,2]))
+nllf= fxy(gauss)
 plot=plot2d(nllf,('x','y'),range=(-1,1))
 M = ModelFunction(nllf,plot=plot)
 for p in M.parameters().values():
